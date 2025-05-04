@@ -29,21 +29,28 @@ export default function CvMaker() {
 
   const [loadingSummary, setLoadingSummary] = useState(false);
 
-  const downloadPDF = () => {
-    const element = document.getElementById("cvPreview"); // pastikan id div preview
-    if (!element) return;
+  // Make sure html2pdf only runs in the client side
+  useEffect(() => {
+    // Now it's safe to use html2pdf
+    const downloadPDF = () => {
+      const element = document.getElementById("cvPreview"); // pastikan id div preview
+      if (!element) return;
 
-    // Opsi untuk file PDF
-    const opt = {
-      margin: 0.4,
-      filename: "cv.pdf",
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas:  { scale: 3, logging: false },
-      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+      // Opsi untuk file PDF
+      const opt = {
+        margin: 0.4,
+        filename: "cv.pdf",
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+      };
+
+      html2pdf().set(opt).from(element).save();
     };
 
-    html2pdf().set(opt).from(element).save();
-  };
+    // Assign downloadPDF to the global scope to avoid `ReferenceError: self is not defined`
+    window.downloadPDF = downloadPDF;
+  }, []); // Empty dependency array ensures this runs only once after the component is mounted
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -271,7 +278,7 @@ ${formData.projectDescription}
       {/* Preview Section */}
       <div className={styles.previewSection}>
         <h2>Preview CV</h2>
-        <div id="cvPreview" className={styles.cvPreview}>
+        <div className={styles.cvPreview}>
           <div className={styles.cvTemplate}>
             <h1>{formData.name || "Your Name"}</h1>
             <div className={styles.contactInfo}>
@@ -360,7 +367,7 @@ ${formData.projectDescription}
             </section>
           </div>
         </div>
-        <button className={styles.btn} onClick={downloadPDF}>
+        <button className="btn" onClick={downloadPDF}>
           Download PDF
         </button>
       </div>
