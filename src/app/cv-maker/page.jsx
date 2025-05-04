@@ -87,7 +87,170 @@ export default function CvMaker() {
         <h1>CV Maker</h1>
         <p>Isi detail Anda untuk membuat CV profesional.</p>
         <form onSubmit={(e) => e.preventDefault()}>
-          {/* Form input seperti sebelumnya */}
+          <label htmlFor="name">Name:</label>
+          <input
+            type="text"
+            id="name"
+            value={formData.name}
+            onChange={handleChange}
+          />
+
+          <label htmlFor="profession">Profession:</label>
+          <input
+            type="text"
+            id="profession"
+            value={formData.profession}
+            onChange={handleChange}
+          />
+
+          <label htmlFor="address">Address:</label>
+          <input
+            type="text"
+            id="address"
+            value={formData.address}
+            onChange={handleChange}
+          />
+
+          <label htmlFor="phone">Phone:</label>
+          <input
+            type="text"
+            id="phone"
+            value={formData.phone}
+            onChange={handleChange}
+          />
+
+          <label htmlFor="email">Email:</label>
+          <input
+            type="email"
+            id="email"
+            value={formData.email}
+            onChange={handleChange}
+          />
+
+          <label htmlFor="linkedin">LinkedIn:</label>
+          <input
+            type="text"
+            id="linkedin"
+            value={formData.linkedin}
+            onChange={handleChange}
+          />
+
+          <label htmlFor="github">GitHub:</label>
+          <input
+            type="text"
+            id="github"
+            value={formData.github}
+            onChange={handleChange}
+          />
+
+          <label htmlFor="summary">Summary:</label>
+          <textarea
+            id="summary"
+            value={formData.summary}
+            onChange={handleChange}
+          />
+
+          <label htmlFor="educationDegree">Degree:</label>
+          <input
+            type="text"
+            id="educationDegree"
+            value={formData.educationDegree}
+            onChange={handleChange}
+          />
+
+          <label htmlFor="educationInstitution">Institution:</label>
+          <input
+            type="text"
+            id="educationInstitution"
+            value={formData.educationInstitution}
+            onChange={handleChange}
+          />
+
+          <label htmlFor="educationDate">Date:</label>
+          <input
+            type="text"
+            id="educationDate"
+            value={formData.educationDate}
+            onChange={handleChange}
+          />
+
+          <label htmlFor="educationGPA">GPA:</label>
+          <input
+            type="text"
+            id="educationGPA"
+            value={formData.educationGPA}
+            onChange={handleChange}
+          />
+
+          <label htmlFor="jobTitle">Job Title:</label>
+          <input
+            type="text"
+            id="jobTitle"
+            value={formData.jobTitle}
+            onChange={handleChange}
+          />
+
+          <label htmlFor="company">Company:</label>
+          <input
+            type="text"
+            id="company"
+            value={formData.company}
+            onChange={handleChange}
+          />
+
+          <label htmlFor="jobDate">Job Date:</label>
+          <input
+            type="text"
+            id="jobDate"
+            value={formData.jobDate}
+            onChange={handleChange}
+          />
+
+          <label htmlFor="jobDescription">Job Description:</label>
+          <textarea
+            id="jobDescription"
+            value={formData.jobDescription}
+            onChange={handleChange}
+          />
+
+          <label htmlFor="skills">Skills:</label>
+          <input
+            type="text"
+            id="skills"
+            value={formData.skills}
+            onChange={handleChange}
+          />
+
+          <label htmlFor="projectName">Project Name:</label>
+          <input
+            type="text"
+            id="projectName"
+            value={formData.projectName}
+            onChange={handleChange}
+          />
+
+          <label htmlFor="projectDate">Project Date:</label>
+          <input
+            type="text"
+            id="projectDate"
+            value={formData.projectDate}
+            onChange={handleChange}
+          />
+
+          <label htmlFor="projectDescription">Project Description:</label>
+          <textarea
+            id="projectDescription"
+            value={formData.projectDescription}
+            onChange={handleChange}
+          />
+
+          <button
+            type="button"
+            onClick={generateSummary}
+            disabled={loadingSummary}
+          >
+            {loadingSummary ? "Generating..." : "Generate Summary"}
+          </button>
         </form>
       </div>
 
