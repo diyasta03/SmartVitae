@@ -2,8 +2,8 @@
 
 .cvContainer {
   display: flex;
-  min-height: 100vh;
-
+  justify-content: space-between;
+  padding: 20px;
 }
 
 .formSection {
