@@ -145,6 +145,7 @@ ${formData.projectDescription}
       <div className={styles.formSection}>
         <h1>CV Maker</h1>
         <p>⚠️ Fitur ini masih dalam tahap pengembangan. Mohon maklum jika ada kekurangan.</p>
+        <p>⚠️ Untuk Pengalaman yang lebih baik gunakan PC ⚠️.</p>
         <form onSubmit={(e) => e.preventDefault()}>
           <h2>Personal Information</h2>
           {[
