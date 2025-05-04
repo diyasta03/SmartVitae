@@ -10,7 +10,7 @@ export default function Home() {
       alignItems: "center",
       fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
     }}>
-      <h1>Selamat datang di React CV Maker</h1>
+      <h1>Selamat datang di SmartVitae-Redistech Devloper Test(beta)</h1>
       <p>Buat CV profesional dengan mudah.</p>
       <Link href="/cv-maker">
         <button style={{
