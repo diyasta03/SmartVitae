@@ -1,5 +1,4 @@
 
-
 .cvContainer {
   display: flex;
   justify-content: space-between;
@@ -59,7 +58,7 @@ textarea.formControl {
 
 .btn {
   background-color: var(--primary-color);
-  color: white;
+  color: rgb(255, 255, 255);
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 4px;
@@ -71,7 +70,7 @@ textarea.formControl {
 }
 
 .btn:hover {
-  background-color: #2980b9;
+  background-color: #2563eb;
 }
 
 .cvPreview {
@@ -152,5 +151,198 @@ textarea.formControl {
   .previewSection {
       max-width: 100%;
       height: auto;
+  }
+}
+
+/* Template Selector - Elevated Position with Proper Spacing */
+.templateSelectorContainer {
+  position: relative;
+  margin: 0 0 2.5rem 0; /* Increased bottom margin from 1.5rem to 2.5rem */
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  z-index: 10;
+}
+
+.templateSelector {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.templateSelector label {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 1rem;
+  white-space: nowrap;
+  margin-right: 0.5rem;
+}
+
+.templateDropdown {
+  flex-grow: 1;
+  padding: 0.75rem 2.5rem 0.75rem 1.25rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  background-color: white;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: #2c3e50;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232c3e50'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1rem;
+  transition: all 0.3s ease;
+  appearance: none;
+}
+
+.templateDropdown:hover {
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.templateDropdown:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+/* Preview Title Styling */
+.previewTitle {
+  margin-top: 3rem; /* Added space above preview title */
+  margin-bottom: 1rem;
+  color: #2c3e50;
+  font-size: 1.25rem;
+  text-align: center; /* Center the text horizontally */
+
+}
+
+/* Floating effect */
+@media (min-width: 768px) {
+  .templateSelectorContainer {
+    position: sticky;
+    top: 1rem;
+    margin-top: -1rem;
+    margin-bottom: 2rem; /* Consistent bottom spacing */
+  }
+}
+
+/* Mobile responsive */
+@media (max-width: 767px) {
+  .templateSelectorContainer {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1rem;
+    margin-bottom: 2rem; /* Maintain spacing on mobile */
+  }
+  
+  .templateSelector {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.8rem;
+  }
+  
+  .templateDropdown {
+    width: 100%;
+  }
+}
+/* Section Buttons */
+.sectionButtons {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.sectionButton {
+  padding: 0.75rem 1.25rem;
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.sectionButton:hover {
+  background-color: #e0e0e0;
+}
+
+.sectionButton.active {
+  background-color: #3498db;
+  color: white;
+}
+
+/* Form Section */
+.formSectionContent {
+  padding: 1.5rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .sectionButtons {
+    gap: 0.3rem;
+  }
+  
+  .sectionButton {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* Back Link Styles - Compact Version */
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  color: #3498db;
+  text-decoration: none;
+  font-weight: 500;
+  border-radius: 6px;
+  transition: all 0.2s ease-out;
+  background-color: rgba(52, 152, 219, 0.1);
+  margin: 0 0 0.5rem 0; /* Reduced bottom margin */
+  border: 1px solid transparent;
+  font-size: 0.9rem;
+}
+
+.backLink:hover {
+  background-color: rgba(52, 152, 219, 0.2);
+  transform: translateX(-2px);
+}
+
+.backLink:active {
+  transform: translateX(0);
+}
+
+.backLink:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.backIcon {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+.backLink:hover .backIcon {
+  transform: translateX(-2px);
+}
+
+/* Mobile adjustment */
+@media (max-width: 768px) {
+  .backLink {
+    padding: 0.4rem 0.8rem;
+    margin-bottom: 0.3rem;
   }
 }

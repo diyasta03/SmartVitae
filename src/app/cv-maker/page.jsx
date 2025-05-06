@@ -3,7 +3,7 @@ import { useState } from "react";
 import styles from "./CvMaker.module.css";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
-
+import { ModernTemplate, ClassicTemplate, ProfessionalTemplate } from './components/templates';
 
 export default function CvMaker() {
   const [formData, setFormData] = useState({
@@ -30,14 +30,15 @@ export default function CvMaker() {
   });
 
   const [loadingSummary, setLoadingSummary] = useState(false);
+  const [activeSection, setActiveSection] = useState("personal");
+  const [selectedTemplate, setSelectedTemplate] = useState("modern");
 
   const downloadPDF = async () => {
     try {
       const element = document.getElementById("cvPreview");
       if (!element) return;
   
-      // Ambil ukuran element
-      const canvas = await html2canvas(element, { scale: 2 }); // Tingkatkan kualitas
+      const canvas = await html2canvas(element, { scale: 2 });
       const imgData = canvas.toDataURL("image/png");
   
       const pdf = new jsPDF({
@@ -60,7 +61,7 @@ export default function CvMaker() {
       const imgHeight = imgProps.height * ratio;
   
       const marginX = (pdfWidth - imgWidth) / 2;
-      const marginY = 10; // Biar gak terlalu atas
+      const marginY = 10;
   
       pdf.addImage(imgData, "PNG", marginX, marginY, imgWidth, imgHeight);
       pdf.save("cv.pdf");
@@ -89,7 +90,7 @@ export default function CvMaker() {
         body: JSON.stringify({ formData }),
       });
 
-      if (!res.ok) throw new Error("Failed to generate summary");
+      if (!res.ok) throw new Error("Quota exceeded. Please try again later.");
 
       const data = await res.json();
       setFormData((prev) => ({
@@ -139,253 +140,284 @@ ${formData.projectDescription}
     document.body.removeChild(element);
   };
 
+  const renderFormSection = () => {
+    switch (activeSection) {
+      case "personal":
+        return (
+          <>
+            <h2>Personal Information</h2>
+            {[
+              { label: "Full Name", id: "name", type: "text" },
+              { label: "Profession", id: "profession", type: "text" },
+              { label: "Address", id: "address", type: "text" },
+              { label: "Phone Number", id: "phone", type: "text" },
+              { label: "Email", id: "email", type: "email" },
+              { label: "LinkedIn Profile", id: "linkedin", type: "text" },
+              { label: "GitHub Profile", id: "github", type: "text" },
+            ].map(({ label, id, type }) => (
+              <div key={id} className={styles.formGroup}>
+                <label htmlFor={id}>{label}</label>
+                <input
+                  id={id}
+                  type={type}
+                  className={styles.formControl}
+                  value={formData[id]}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            ))}
+            <div className={styles.formGroup}>
+              <label htmlFor="summary">Professional Summary</label>
+              <textarea
+                id="summary"
+                rows={4}
+                className={styles.formControl}
+                value={formData.summary}
+                onChange={handleChange}
+                placeholder="Describe your professional summary"
+                required
+              />
+            </div>
+            <button
+              type="button"
+              onClick={generateSummary}
+              className={styles.btn}
+              disabled={loadingSummary}
+            >
+              {loadingSummary ? "Generating summary..." : "Generate AI Summary"}
+            </button>
+          </>
+        );
+      case "education":
+        return (
+          <>
+            <h2>Education</h2>
+            {[
+              { label: "Degree", id: "educationDegree" },
+              { label: "Institution", id: "educationInstitution" },
+              { label: "Date", id: "educationDate" },
+              { label: "GPA/Score", id: "educationGPA" },
+            ].map(({ label, id }) => (
+              <div key={id} className={styles.formGroup}>
+                <label htmlFor={id}>{label}</label>
+                <input
+                  id={id}
+                  type="text"
+                  className={styles.formControl}
+                  value={formData[id]}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            ))}
+          </>
+        );
+      case "experience":
+        return (
+          <>
+            <h2>Work Experience</h2>
+            {[
+              { label: "Job Title", id: "jobTitle" },
+              { label: "Company", id: "company" },
+              { label: "Date", id: "jobDate" },
+            ].map(({ label, id }) => (
+              <div key={id} className={styles.formGroup}>
+                <label htmlFor={id}>{label}</label>
+                <input
+                  id={id}
+                  type="text"
+                  className={styles.formControl}
+                  value={formData[id]}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            ))}
+            <div className={styles.formGroup}>
+              <label htmlFor="jobDescription">Description</label>
+              <textarea
+                id="jobDescription"
+                className={styles.formControl}
+                rows={4}
+                value={formData.jobDescription}
+                onChange={handleChange}
+                placeholder="Describe your job responsibilities"
+                required
+              />
+            </div>
+          </>
+        );
+      case "skills":
+        return (
+          <>
+            <h2>Skills</h2>
+            <div className={styles.formGroup}>
+              <label htmlFor="skills">List your skills (comma separated)</label>
+              <input
+                id="skills"
+                type="text"
+                className={styles.formControl}
+                value={formData.skills}
+                onChange={handleChange}
+                placeholder="JavaScript, HTML, CSS, React"
+                required
+              />
+            </div>
+          </>
+        );
+      case "projects":
+        return (
+          <>
+            <h2>Projects</h2>
+            {[
+              { label: "Project Name", id: "projectName" },
+              { label: "Date", id: "projectDate" },
+            ].map(({ label, id }) => (
+              <div key={id} className={styles.formGroup}>
+                <label htmlFor={id}>{label}</label>
+                <input
+                  id={id}
+                  type="text"
+                  className={styles.formControl}
+                  value={formData[id]}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            ))}
+            <div className={styles.formGroup}>
+              <label htmlFor="projectDescription">Description</label>
+              <textarea
+                id="projectDescription"
+                className={styles.formControl}
+                rows={4}
+                value={formData.projectDescription}
+                onChange={handleChange}
+                placeholder="Describe the project and your contributions"
+                required
+              />
+            </div>
+          </>
+        );
+      default:
+        return null;
+    }
+  };
+
+  const renderSelectedTemplate = () => {
+    switch(selectedTemplate) {
+      case "modern":
+        return <ModernTemplate formData={formData} />;
+      case "classic":
+        return <ClassicTemplate formData={formData} />;
+      case "professional":
+        return <ProfessionalTemplate formData={formData} />;
+      default:
+        return <ModernTemplate formData={formData} />;
+    }
+  };
+
   return (
     <div className={styles.cvContainer}>
       {/* Form Section */}
       <div className={styles.formSection}>
-        <h1>CV Maker</h1>
-        <p>⚠️ Fitur ini masih dalam tahap pengembangan. Mohon maklum jika ada kekurangan.</p>
-        <p>⚠️ Untuk Pengalaman yang lebih baik gunakan PC ⚠️.</p>
-        <form onSubmit={(e) => e.preventDefault()}>
-          <h2>Personal Information</h2>
-          {[
-            { label: "Full Name", id: "name", type: "text" },
-            { label: "Profession", id: "profession", type: "text" },
-            { label: "Address", id: "address", type: "text" },
-            { label: "Phone Number", id: "phone", type: "text" },
-            { label: "Email", id: "email", type: "email" },
-            { label: "LinkedIn Profile", id: "linkedin", type: "text" },
-            { label: "GitHub Profile", id: "github", type: "text" },
-          ].map(({ label, id, type }) => (
-            <div key={id} className={styles.formGroup}>
-              <label htmlFor={id}>{label}</label>
-              <input
-                id={id}
-                type={type}
-                className={styles.formControl}
-                value={formData[id]}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          ))}
-
+      <a 
+  href="#"
+  onClick={(e) => {
+    e.preventDefault();
+    window.history.back();
+  }}
+  className={styles.backLink}
+>
+  <span className={styles.backIcon}>&lt;</span> Back
+</a>
+        <h1 style={{textAlign:"center "}}>CV Maker</h1>
+        <p style={{textAlign:"center "}}>  ⚠️ This feature is under development. Please excuse any shortcomings.</p>
+        <p style={{textAlign:"center "}}>⚠️ For better experience use a PC.</p>
         
-
-          <h2>Education</h2>
-          {[
-            { label: "Degree", id: "educationDegree" },
-            { label: "Institution", id: "educationInstitution" },
-            { label: "Date", id: "educationDate" },
-            { label: "GPA/Score", id: "educationGPA" },
-          ].map(({ label, id }) => (
-            <div key={id} className={styles.formGroup}>
-              <label htmlFor={id}>{label}</label>
-              <input
-                id={id}
-                type="text"
-                className={styles.formControl}
-                value={formData[id]}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          ))}
-
-          <h2>Work Experience</h2>
-          {[
-            { label: "Job Title", id: "jobTitle" },
-            { label: "Company", id: "company" },
-            { label: "Date", id: "jobDate" },
-          ].map(({ label, id }) => (
-            <div key={id} className={styles.formGroup}>
-              <label htmlFor={id}>{label}</label>
-              <input
-                id={id}
-                type="text"
-                className={styles.formControl}
-                value={formData[id]}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          ))}
-          <div className={styles.formGroup}>
-            <label htmlFor="jobDescription">Description</label>
-            <textarea
-              id="jobDescription"
-              className={styles.formControl}
-              rows={4}
-              value={formData.jobDescription}
-              onChange={handleChange}
-              placeholder="Describe your job responsibilities"
-              required
-            />
+        <form onSubmit={(e) => e.preventDefault()}>
+          <div className={styles.sectionButtons}>
+            <button 
+              type="button"
+              onClick={() => setActiveSection('personal')}
+              className={`${styles.sectionButton} ${activeSection === 'personal' ? styles.active : ''}`}
+            >
+              Personal Info
+            </button>
+            
+            <button 
+              type="button"
+              onClick={() => setActiveSection('education')}
+              className={`${styles.sectionButton} ${activeSection === 'education' ? styles.active : ''}`}
+            >
+              Education
+            </button>
+            
+            <button 
+              type="button"
+              onClick={() => setActiveSection('experience')}
+              className={`${styles.sectionButton} ${activeSection === 'experience' ? styles.active : ''}`}
+            >
+              Experience
+            </button>
+            
+            <button 
+              type="button"
+              onClick={() => setActiveSection('skills')}
+              className={`${styles.sectionButton} ${activeSection === 'skills' ? styles.active : ''}`}
+            >
+              Skills
+            </button>
+            
+            <button 
+              type="button"
+              onClick={() => setActiveSection('projects')}
+              className={`${styles.sectionButton} ${activeSection === 'projects' ? styles.active : ''}`}
+            >
+              Projects
+            </button>
           </div>
-
-          <h2>Skills</h2>
-          <div className={styles.formGroup}>
-            <label htmlFor="skills">List your skills (comma separated)</label>
-            <input
-              id="skills"
-              type="text"
-              className={styles.formControl}
-              value={formData.skills}
-              onChange={handleChange}
-              placeholder="JavaScript, HTML, CSS, React"
-              required
-            />
+          
+          <div className={styles.formSectionContent}>
+            {renderFormSection()}
           </div>
-
-          <h2>Projects</h2>
-          {[
-            { label: "Project Name", id: "projectName" },
-            { label: "Date", id: "projectDate" },
-          ].map(({ label, id }) => (
-            <div key={id} className={styles.formGroup}>
-              <label htmlFor={id}>{label}</label>
-              <input
-                id={id}
-                type="text"
-                className={styles.formControl}
-                value={formData[id]}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          ))}
-          <div className={styles.formGroup}>
-            <label htmlFor="projectDescription">Description</label>
-            <textarea
-              id="projectDescription"
-              className={styles.formControl}
-              rows={4}
-              value={formData.projectDescription}
-              onChange={handleChange}
-              placeholder="Describe the project and your contributions"
-              required
-            />
+          
+          <div className={styles.actionButtons}>
+            <button 
+              type="button" 
+              onClick={downloadPDF} 
+              className={styles.btn}
+            >
+              Download PDF
+            </button>
           </div>
-            <div className={styles.formGroup}>
-            <label htmlFor="summary">Professional Summary</label>
-            <textarea
-              id="summary"
-              rows={4}
-              className={styles.formControl}
-              value={formData.summary}
-              onChange={handleChange}
-              placeholder="Describe your professional summary"
-              required
-            />
-          </div>
-
-          <button
-            type="button"
-            onClick={generateSummary}
-            className={styles.btn}
-            disabled={loadingSummary}
-          >
-            {loadingSummary ? "Generating summary..." : "Gunakan AI untuk Membuat Summary"}
-          </button>
         </form>
       </div>
 
       {/* Preview Section */}
       <div className={styles.previewSection}>
-        <h2>CV Preview</h2>
-        <div id="cvPreview" className={styles.cvPreview}>
-          <div className={styles.cvTemplate}>
-            <h1>{formData.name || "Your Name"}</h1>
-            <div className={styles.contactInfo}>
-              {formData.address || "Address"} | {formData.phone || "Phone"} |{" "}
-              {formData.email || "Email"} |{" "}
-              {formData.github ? (
-                <a href={formData.github} target="_blank" rel="noreferrer">
-                  GitHub
-                </a>
-              ) : (
-                "GitHub"
-              )}{" "}
-              |{" "}
-              {formData.linkedin ? (
-                <a href={formData.linkedin} target="_blank" rel="noreferrer">
-                  LinkedIn
-                </a>
-              ) : (
-                "LinkedIn"
-              )}
-            </div>
-
-            <section className={styles.section}>
-              <h2>SUMMARY</h2>
-              <p>{formData.summary || "Professional summary goes here."}</p>
-            </section>
-
-            <section className={styles.section}>
-              <h2>EDUCATION</h2>
-              <div className={styles.educationItem}>
-                <div className={styles.degree}>
-                  {formData.educationDegree || "Degree"}
-                </div>
-                <div>{formData.educationInstitution || "Institution"}</div>
-                <div className={styles.date}>
-                  {formData.educationDate || "Date"}
-                </div>
-                <div>GPA: {formData.educationGPA || "GPA/Score"}</div>
-              </div>
-            </section>
-
-            <section className={styles.section}>
-              <h2>WORK EXPERIENCE</h2>
-              <div className={styles.jobItem}>
-                <div>
-                  <span className={styles.jobTitle}>
-                    {formData.jobTitle || "Job Title"}
-                  </span>
-                  <span className={styles.date}>{formData.jobDate || "Date"}</span>
-                </div>
-                <div>{formData.company || "Company"}</div>
-                <p>
-                  {formData.jobDescription || "Job description and responsibilities."}
-                </p>
-              </div>
-            </section>
-
-            <section className={styles.section}>
-              <h2>SKILLS</h2>
-              <div className={styles.skillsList}>
-                {(formData.skills || "Skill 1, Skill 2")
-                  .split(",")
-                  .map((skill, idx) => (
-                    <span key={idx} className={styles.skillTag}>
-                      {skill.trim()}
-                    </span>
-                  ))}
-              </div>
-            </section>
-
-            <section className={styles.section}>
-              <h2>PROJECTS</h2>
-              <div className={styles.projectItem}>
-                <div>
-                  <span className={styles.jobTitle}>
-                    {formData.projectName || "Project Name"}
-                  </span>
-                  <span className={styles.date}>{formData.projectDate || "Date"}</span>
-                </div>
-                <p>
-                  {formData.projectDescription || "Project description and contributions."}
-                </p>
-              </div>
-            </section>
+        <div className={styles.templateSelectorContainer}>
+         
+          <div className={styles.templateSelector}>
+            <label htmlFor="templateSelect">Template:</label>
+            <select
+              id="templateSelect"
+              value={selectedTemplate}
+              onChange={(e) => setSelectedTemplate(e.target.value)}
+              className={styles.templateDropdown}
+            >
+              <option value="modern">Modern</option>
+              <option value="classic">Classic</option>
+              <option value="professional">Professional</option>
+            </select>
           </div>
         </div>
-
-        <div className={styles.buttons}>
-          <button onClick={downloadPDF} className={styles.btn}>
-            Download PDF
-          </button>
-          
+        <div className={styles.previewHeader}>
+            <h2 className={styles.previewTitle}>CV Preview</h2>
+          </div>
+        <div id="cvPreview" className={styles.cvPreview}>
+          {renderSelectedTemplate()}
         </div>
       </div>
     </div>
