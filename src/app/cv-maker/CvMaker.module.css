@@ -73,14 +73,16 @@ textarea.formControl {
   background-color: #2563eb;
 }
 
+/* Dalam file CSS Anda */
 .cvPreview {
-  background-color: white;
-  padding: 2rem;
+  width: 100%;
+  max-width: 210mm; /* Ukuran A4 */
+  margin: 0 auto;
+  background: white;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  flex-grow: 1;
-  overflow-y: auto;
+  overflow: hidden; /* Hilangkan scroll */
+  transform-origin: top center; /* Untuk scaling yang lebih baik */
 }
-
 .cvTemplate {
   font-family: Arial, sans-serif;
   line-height: 1.6;
@@ -148,10 +150,13 @@ textarea.formControl {
   }
 
   .formSection,
-  .previewSection {
-      max-width: 100%;
-      height: auto;
-  }
+  
+.previewSection {
+  width: 100%;
+  overflow: auto;
+  padding: 20px;
+  box-sizing: border-box;
+}
 }
 
 /* Template Selector - Elevated Position with Proper Spacing */

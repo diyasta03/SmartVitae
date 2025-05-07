@@ -38,8 +38,21 @@ export default function CvMaker() {
       const element = document.getElementById("cvPreview");
       if (!element) return;
   
-      const canvas = await html2canvas(element, { scale: 2 });
-      const imgData = canvas.toDataURL("image/png");
+      // Simpan style asli
+      const originalStyles = {
+        width: element.style.width,
+        height: element.style.height,
+        overflow: element.style.overflow
+      };
+  
+      // Set ukuran A4 untuk konversi
+      const pageWidth = 210; // mm (A4)
+      const pageHeight = 297; // mm (A4)
+      const pixelRatio = 2; // Untuk kualitas lebih tinggi
+  
+      element.style.width = `${pageWidth}mm`;
+      element.style.height = "auto"; // Biarkan tinggi mengikuti konten
+      element.style.overflow = "visible";
   
       const pdf = new jsPDF({
         orientation: "portrait",
@@ -47,23 +60,45 @@ export default function CvMaker() {
         format: "a4",
       });
   
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
+      // Hitung tinggi elemen dalam pixel
+      const canvas = await html2canvas(element, {
+        scale: pixelRatio,
+        logging: false,
+        useCORS: true,
+        scrollY: 0,
+      });
   
-      const imgProps = {
-        width: canvas.width,
-        height: canvas.height,
-      };
+      const imgData = canvas.toDataURL("image/png");
+      const imgWidth = pageWidth;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
   
-      const ratio = Math.min(pdfWidth / imgProps.width, pdfHeight / imgProps.height);
+      // Split ke multi-halaman jika terlalu tinggi
+      let heightLeft = imgHeight;
+      let position = 0;
+      const pageHeightMM = pageHeight - 20; // Beri margin bawah
   
-      const imgWidth = imgProps.width * ratio;
-      const imgHeight = imgProps.height * ratio;
+      while (heightLeft > 0) {
+        const newPageHeight = heightLeft > pageHeightMM ? pageHeightMM : heightLeft;
+        pdf.addImage(
+          imgData,
+          "PNG",
+          0, // x
+          -position, // y (negatif untuk 'scroll' ke bagian berikutnya)
+          imgWidth,
+          imgHeight
+        );
+        
+        heightLeft -= pageHeightMM;
+        position += pageHeightMM;
   
-      const marginX = (pdfWidth - imgWidth) / 2;
-      const marginY = 10;
+        if (heightLeft > 0) {
+          pdf.addPage();
+        }
+      }
   
-      pdf.addImage(imgData, "PNG", marginX, marginY, imgWidth, imgHeight);
+      // Kembalikan style asli
+      Object.assign(element.style, originalStyles);
+  
       pdf.save("cv.pdf");
     } catch (error) {
       console.error("Error generating PDF:", error);
@@ -86,24 +121,49 @@ export default function CvMaker() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Accept": "application/json" // Explicitly ask for JSON
         },
         body: JSON.stringify({ formData }),
       });
-
-      if (!res.ok) throw new Error("Quota exceeded. Please try again later.");
-
-      const data = await res.json();
-      setFormData((prev) => ({
+  
+      if (!res.ok) {
+        // Try to parse error as JSON first
+        const errorData = await res.json().catch(() => null);
+        throw new Error(errorData?.error || `HTTP error! status: ${res.status}`);
+      }
+  
+      // Handle both JSON and plaintext responses
+      const contentType = res.headers.get("content-type");
+      let data;
+      
+      if (contentType?.includes("application/json")) {
+        data = await res.json();
+      } else {
+        const text = await res.text();
+        try {
+          // Try to parse as JSON if it's stringified JSON
+          data = JSON.parse(text);
+        } catch {
+          // If plaintext, wrap it as JSON
+          data = { summary: text };
+        }
+      }
+  
+      // Clean the summary text
+      const summary = data.summary?.replace(/^plaintext\s*/i, "").trim();
+      
+      setFormData(prev => ({
         ...prev,
-        summary: data.summary || "",
+        summary: summary || "Failed to generate summary"
       }));
+  
     } catch (error) {
+      console.error("Error:", error);
       alert(error.message);
     } finally {
       setLoadingSummary(false);
     }
   };
-
   const downloadCV = () => {
     const content = `
 ${formData.name}
