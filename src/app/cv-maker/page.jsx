@@ -227,26 +227,7 @@ ${formData.projectDescription}
                 />
               </div>
             ))}
-            <div className={styles.formGroup}>
-              <label htmlFor="summary">Professional Summary</label>
-              <textarea
-                id="summary"
-                rows={4}
-                className={styles.formControl}
-                value={formData.summary}
-                onChange={handleChange}
-                placeholder="Describe your professional summary"
-                required
-              />
-            </div>
-            <button
-              type="button"
-              onClick={generateSummary}
-              className={styles.btn}
-              disabled={loadingSummary}
-            >
-              {loadingSummary ? "Generating summary..." : "Generate AI Summary"}
-            </button>
+          
           </>
         );
       case "education":
@@ -357,6 +338,26 @@ ${formData.projectDescription}
                 placeholder="Describe the project and your contributions"
                 required
               />
+                <div className={styles.formGroup}>
+              <label htmlFor="summary">Professional Summary</label>
+              <textarea
+                id="summary"
+                rows={4}
+                className={styles.formControl}
+                value={formData.summary}
+                onChange={handleChange}
+                placeholder="Describe your professional summary"
+                required
+              />
+            </div>
+            <button
+              type="button"
+              onClick={generateSummary}
+              className={styles.btn}
+              disabled={loadingSummary}
+            >
+              {loadingSummary ? "Generating summary..." : "Generate AI Summary"}
+            </button>
             </div>
           </>
         );

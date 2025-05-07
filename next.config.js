@@ -1,7 +1,11 @@
 /** @type {import('next').NextConfig} */
-module.exports = {
-    images: {
-      domains: ['images.unsplash.com', 'randomuser.me'], // Menambahkan randomuser.me
-    },
-  }
-  
+const nextConfig = {
+  images: {
+    domains: ['images.unsplash.com', 'randomuser.me'],
+  },
+  api: {
+    bodyParser: false,
+  },
+};
+
+module.exports = nextConfig;
