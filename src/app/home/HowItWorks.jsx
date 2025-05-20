@@ -13,21 +13,21 @@ const HowItWorks = () => {
           <div className={styles.stepNumber}>1</div>
           <h3 className={styles.stepTitle}>Upload Your Resume</h3>
           <p className={styles.stepDescription}>
-            Simply upload your current resume in PDF or Word format
+            Simply upload your current resume in PDF Format
           </p>
         </div>
         <div className={styles.step}>
           <div className={styles.stepNumber}>2</div>
-          <h3 className={styles.stepTitle}>AI & Expert Review</h3>
+          <h3 className={styles.stepTitle}>AI Review</h3>
           <p className={styles.stepDescription}>
-            Our experts will review every section of your resume
+            AI Analyze Your CV
           </p>
         </div>
         <div className={styles.step}>
           <div className={styles.stepNumber}>3</div>
           <h3 className={styles.stepTitle}>Get Results</h3>
           <p className={styles.stepDescription}>
-            Receive detailed feedback within 24 hours
+            Recevie Your CV Skor with Feedback
           </p>
         </div>
       </div>

@@ -1,0 +1,31 @@
+.svgCircle {
+  position: relative;
+  transform: rotate(-90deg); /* start from top */
+  margin: 0 auto;
+}
+
+.bgCircle {
+  opacity: 0.3;
+}
+
+.progressCircle {
+  transition: stroke-dashoffset 0.5s ease;
+}
+
+.scoreValue {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -60%);
+  font-size: 2rem;
+  font-weight: bold;
+  color: #2d3436;
+}
+
+.scoreLabel {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #636e72;
+  margin-top: 8px;
+  text-transform: uppercase;
+}

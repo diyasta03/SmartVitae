@@ -35,7 +35,7 @@ const HeroSection = () => {
         </ul>
 
         <div className={styles.buttonGroup}>
-          <Link href="/cv-maker" className={styles.primaryButton}>
+          <Link href="/cv-analyze" className={styles.primaryButton}>
             IMPROVE MY RESUME →
           </Link>
           <Link href="/cv-maker" className={styles.secondaryButton}>
