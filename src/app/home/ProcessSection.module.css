@@ -1,0 +1,144 @@
+/* ProcessSection.module.css */
+.processContainer {
+  padding: 5rem 1rem;
+  background: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.processHeader {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.processTitle {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 1rem;
+  background: linear-gradient(90deg, #6366f1 0%, #4f46e5 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.processSubtitle {
+  font-size: 1.125rem;
+  color: #64748b;
+  max-width: 42rem;
+  margin: 0 auto;
+}
+
+.processContent {
+  max-width: 80rem;
+  margin: 0 auto;
+  position: relative;
+}
+
+.processSteps {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  position: relative;
+}
+
+.stepCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  padding: 0 1.5rem;
+  max-width: 24rem;
+  margin: 0 auto;
+}
+
+.stepNumber {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background-color: var(--accent-color);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.25rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 2;
+}
+
+.stepIconContainer {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  background-color: rgba(var(--accent-color), 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.stepIcon {
+  color: var(--accent-color);
+}
+
+.stepTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.75rem;
+}
+
+.stepDesc {
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.stepConnector {
+  position: absolute;
+  height: 3rem;
+  width: 2px;
+  background-color: #e2e8f0;
+  bottom: -3rem;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Responsive Design */
+@media (min-width: 768px) {
+  .processSteps {
+    flex-direction: row;
+    justify-content: center;
+    gap: 4rem;
+  }
+
+  .stepCard {
+    max-width: 20rem;
+  }
+
+  .stepConnector {
+    height: 2px;
+    width: 4rem;
+    bottom: auto;
+    left: auto;
+    right: -4rem;
+    top: 6rem;
+    transform: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .processHeader {
+    margin-bottom: 2rem;
+  }
+  
+  .processTitle {
+    font-size: 1.75rem;
+  }
+  
+  .processSubtitle {
+    font-size: 1rem;
+  }
+}

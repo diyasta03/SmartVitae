@@ -22,6 +22,8 @@
 }
 
 .heroContent {
+      padding-left: 2rem; /* Geser teks ke kanan */
+
   flex: 1;
   max-width: 600px;
   z-index: 1;
@@ -140,6 +142,10 @@
 }
 
 .image {
+      display: block;
+ width: 100%;
+  height: auto;
+  transform: translateZ(30px);
   border-radius: 1rem;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   z-index: 1;
@@ -175,4 +181,21 @@
   .heroImage {
     margin-top: 3rem;
   }
+}
+
+/* HeroSection.module.css */
+
+.imageWrapper {
+  max-width: 350px; /* batasi lebar maksimal */
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  margin: auto;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+}
+
+.imageWrapper:hover {
+  transform: rotateY(8deg) rotateX(2deg) scale(1.02);
+  box-shadow: 0 50px 100px rgba(0, 0, 0, 0.3);
 }

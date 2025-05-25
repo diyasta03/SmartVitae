@@ -1,5 +1,6 @@
 /* Navbar.module.css */
 .header {
+  
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -12,6 +13,8 @@
 }
 
 .logo {
+    padding-left: 3rem; /* Geser teks ke kanan */
+
   font-weight: 700;
   font-size: 1.5rem;
   color: #2563eb;
