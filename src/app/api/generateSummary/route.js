@@ -10,24 +10,26 @@ export async function POST(req) {
     });
 
     const { formData } = await req.json();
-
+    // --- PERBAIKAN DI SINI: Ekstrak data dari struktur yang baru ---
+    const personalInfo = formData.personalInfo || {};
+    // Ambil entri pertama dari setiap array sebagai konteks utama
+    const firstExperience = formData.experiences?.[0] || {};
+    const firstEducation = formData.educations?.[0] || {};
+    const firstProject = formData.projects?.[0] || {};
+    const skills = formData.skills || '';
     console.log("Data diterima di server:", formData);
 
-    const prompt = `Tuliskan ringkasan profesional singkat untuk bagian Summary dalam CV, gunakan sudut pandang orang pertama (gunakan kata "Saya"). Gunakan bahasa Indonesia yang formal namun tetap natural. Ringkasan harus fokus pada pengalaman kerja, keahlian, pendidikan, proyek, dan tujuan karier.
+     const prompt = `Tuliskan ringkasan profesional singkat untuk bagian Summary dalam CV, gunakan sudut pandang orang pertama ("Saya"). Gunakan bahasa Indonesia yang formal namun tetap natural. Ringkasan harus fokus pada pengalaman kerja, keahlian, pendidikan, proyek, dan tujuan karier berdasarkan data berikut. Buat ringkasan maksimal 3-5 kalimat, padat dan menjual.
 
-    Nama: ${formData.name}
-    Profesi: ${formData.profession}
-    Alamat: ${formData.address}
-    No HP: ${formData.phone}
-    Email: ${formData.email}
-    LinkedIn: ${formData.linkedin}
-    GitHub: ${formData.github}
-    Pendidikan: ${formData.educationDegree} dari ${formData.educationInstitution} (${formData.educationDate}), GPA: ${formData.educationGPA}
-    Pengalaman kerja: ${formData.jobTitle} di ${formData.company} (${formData.jobDate}) - ${formData.jobDescription}
-    Keterampilan: ${formData.skills}
-    Proyek: ${formData.projectName} (${formData.projectDate}) - ${formData.projectDescription}
+    Data CV:
+    - Nama: ${personalInfo.name}
+    - Profesi: ${personalInfo.profession}
+    - Pendidikan: ${firstEducation.degree} di ${firstEducation.institution} (${firstEducation.date})
+    - Pengalaman: ${firstExperience.jobTitle} di ${firstExperience.company} (${firstExperience.date})
+    - Keahlian: ${skills}
+    - Proyek: ${firstProject.name}
     
-    Buat ringkasan maksimal 3-5 kalimat, padat dan menjual.
+    PENTING: Jangan sertakan kalimat pembuka atau basa-basi seperti "Berikut adalah contoh...". Langsung berikan HANYA paragraf ringkasannya saja. Output harus langsung dimulai dengan "Saya adalah...".
     `;
 
     const completion = await client.chat.completions.create({

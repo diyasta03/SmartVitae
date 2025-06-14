@@ -8,7 +8,6 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <main>{children}</main>
-        <Footer />
       </body>
     </html>
   );

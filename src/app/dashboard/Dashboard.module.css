@@ -1,0 +1,313 @@
+/* General Page Layout */
+.pageContainer {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    background-color: #f9fafb; /* gray-50 */
+    min-height: calc(100vh - 4rem); /* Full height minus navbar */
+}
+
+.headerTitle {
+    font-size: 2.25rem; /* 36px */
+    font-weight: 700;
+    color: #1f2937; /* gray-800 */
+}
+
+.headerSubtitle {
+    color: #6b7280; /* gray-500 */
+    margin-top: 0.25rem;
+}
+
+/* Statistics Cards */
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1.5rem;
+}
+
+.statCard {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.statLabel {
+    color: #6b7280;
+    font-weight: 600;
+}
+
+.statValue {
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin-top: 0.5rem;
+}
+
+.statValueBlue {
+    composes: statValue;
+    color: #2563eb; /* blue-600 */
+}
+
+.statValueGreen {
+    composes: statValue;
+    color: #16a34a; /* green-600 */
+}
+
+.statActionCard {
+    composes: statCard;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.actionButton {
+    background-color: #3b82f6; /* blue-500 */
+    color: white;
+    font-weight: 700;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.actionButton:hover {
+    background-color: #2563eb; /* blue-600 */
+}
+
+/* Job Tracker Component */
+.trackerContainer {
+    composes: statCard;
+}
+
+.trackerTitle {
+    font-size: 1.5rem; /* 24px */
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 1.5rem;
+}
+
+/* -- Add Form -- */
+.addFormContainer {
+    padding: 1.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    background-color: #f9fafb;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.addFormTitle {
+    font-weight: 700;
+    font-size: 1.125rem;
+}
+
+.mainInputsGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    align-items: flex-end;
+}
+
+.secondaryInputs {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.formInput {
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    width: 100%;
+    font-size: 1rem;
+    resize: none;
+}
+.formInput:focus {
+    outline: 2px solid #3b82f6;
+    border-color: transparent;
+}
+
+.formButton {
+    background-color: #10b981; /* emerald-500 */
+    color: white;
+    font-weight: 700;
+    padding: 0.75rem;
+    border-radius: 0.375rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+}
+.formButton:hover {
+    background-color: #059669; /* emerald-600 */
+}
+
+/* -- Applications Table -- */
+.tableContainer {
+    overflow-x: auto;
+}
+
+.table {
+    min-width: 100%;
+    background-color: white;
+    font-size: 0.875rem;
+    border-collapse: collapse;
+}
+
+.thead {
+    background-color: #f3f4f6;
+}
+
+.th {
+    text-align: left;
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    color: #374151;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.tr {
+    border-bottom: 1px solid #e5e7eb;
+}
+.tr:last-child {
+    border-bottom: none;
+}
+.tr:hover {
+    background-color: #f9fafb;
+}
+
+.td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.statusSelect {
+    padding: 0.25rem 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    background-color: white;
+}
+
+/* -- Edit Modal -- */
+.modalBackdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+.modalContent {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    width: 90%;
+    max-width: 500px;
+}
+
+.modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+
+.modalTitle {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.closeButton {
+    background: none;
+    border: none;
+    font-size: 1.75rem;
+    line-height: 1;
+    cursor: pointer;
+    color: #9ca3af;
+}
+
+.modalBody {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.modalFooter {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+/* Responsive Media Queries */
+@media (min-width: 768px) {
+    .statsGrid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .mainInputsGrid {
+        grid-template-columns: 2fr 2fr 1fr;
+    }
+}
+/* Tambahkan di Dashboard.module.css */
+.actionButtonEdit {
+    color: #3b82f6; /* blue-500 */
+    background: none;
+    border: none;
+    padding: 0.5rem;
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    transition: all 0.2s;
+}
+
+.actionButtonEdit:hover {
+    text-decoration-color: currentColor;
+}
+
+.actionButtonDelete {
+    color: #ef4444; /* red-500 */
+    background: none;
+    border: none;
+    padding: 0.5rem;
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    transition: all 0.2s;
+}
+
+.actionButtonDelete:hover {
+    text-decoration-color: currentColor;
+}
+
+.buttonGroup {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.cardLink {
+    text-decoration: none; /* Hapus garis bawah dari link */
+    color: inherit; /* Gunakan warna teks dari parent */
+    display: block; /* Buat link mengisi seluruh area card */
+    transition: transform 0.2s ease-in-out;
+}
+
+.cardLink:hover {
+    transform: translateY(-5px); /* Efek sedikit terangkat saat hover */
+}

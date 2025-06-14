@@ -1,0 +1,11 @@
+/* styles.css */
+/* Hide scrollbar for Chrome, Safari and Opera */
+body::-webkit-scrollbar{
+  display: none;
+}
+.radial-gradient-bg {
+  --size: 20px;
+  --left: 0%;
+  --bottom: 100%;
+  background-image: radial-gradient(var(--size) at var(--left) var(--bottom), blue 70%, white);
+}

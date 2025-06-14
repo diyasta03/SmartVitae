@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body::-webkit-scrollbar{
+  display: none;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+#root {
+  height: 100%;
+}
+
+.navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.gradient_button {
+  background: radial-gradient(circle at 0 100%, blue 70%, white);
+  background-size: var(--gradient-size, 100%);
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: background-size 0.5s ease, transform 0.5s ease;
+}
+
+.test_card{
+  position: relative;
+}
+
+

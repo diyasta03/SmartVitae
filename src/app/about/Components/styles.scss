@@ -1,0 +1,72 @@
+//Now we want to generalise this for anywhere we place our cursor
+//Declare the posX and posY variables here
+//Update those variables from javascript
+:root {
+  --leftX: 0%;
+  --bottomY: 0%;
+}
+
+@keyframes wavelogoloop {
+  
+  $i: 0;
+  $left: 0;
+  $bottom: 100;
+  // $bottom: var(--bottomY);
+  $position: "closest-corner";
+  $size: 10;
+
+  @while $i < 100 {
+    #{$i * 1%} {
+      background-image: radial-gradient(#{$size * 1px} at #{$left * 1%} #{$bottom * 1%}, blue 70%, white);
+      // background-image: radial-gradient(#{$size * 1px} at var(--leftX) var(--bottomY), blue 70%, white);
+
+    }
+    $i: $i + 10;
+    $left: $left + 5;
+    $bottom: $bottom - 5;
+    $size: $size + 5;
+  }
+
+  #{$i * 1%}{
+    background-image: radial-gradient(#{$size * 1px} at 100% 100%, blue 100%, white);
+    color:white;
+  }
+}
+
+@keyframes wavelogoloopReverse {
+  $i: 0;
+  $left: 100;
+  $bottom: 0;
+  $position: "closest-corner";
+  $size: 80;
+  $temp_size: $size;
+
+  #{$i * 1%}{
+    background-image: radial-gradient(#{$size * 1px} at 100% 100%, blue 100%, white);
+    color:black;
+  }
+
+  @while $i < 100 {
+    #{$i * 1%} {
+      background-image: radial-gradient(#{$size * 1px} at #{$left * 1%} #{$bottom * 1%}, blue 70%, white);
+      color: white;
+    }
+    $i: $i + 10;
+    $left: $left - 10;
+    $bottom: $bottom + 10;
+    $size: $size - 8;
+  }
+
+  #{$i * 1%}{
+    background-image: radial-gradient(#{$temp_size * 1px} at 100% 100%, white 100%, blue);
+    color:black;
+  }
+}
+
+.button-animation:hover {
+  animation: wavelogoloop 0.3s forwards;
+}
+
+.button-animation {
+  animation: wavelogoloopReverse 0.3s forwards;
+}

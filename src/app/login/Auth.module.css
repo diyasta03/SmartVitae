@@ -1,0 +1,161 @@
+/* Auth.module.css */
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f3f4f6; /* light gray */
+    padding: 1rem;
+}
+
+.formWrapper {
+    position: relative;
+    max-width: 420px;
+    width: 100%;
+}
+
+.gradientBg {
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(to right, #60a5fa, #3b82f6); /* blue gradient */
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    transform: skewY(-6deg);
+    border-radius: 1.5rem;
+}
+
+.formCard {
+    position: relative;
+    background-color: white;
+    padding: 2.5rem;
+    border-radius: 1.5rem;
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+
+.title {
+    font-size: 1.875rem; /* 30px */
+    font-weight: 600;
+    color: #1f2937; /* dark gray */
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.error {
+    background-color: #fee2e2;
+    color: #b91c1c;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.875rem;
+    text-align: center;
+}
+
+.formGroup {
+    position: relative;
+    margin-top: 1.5rem;
+}
+
+.formInput {
+    width: 100%;
+    border: 0;
+    border-bottom: 2px solid #d1d5db; /* gray-300 */
+    padding: 0.5rem 0;
+    font-size: 1rem;
+    color: #111827;
+    background-color: transparent;
+    transition: border-color 0.2s;
+}
+
+.formInput::placeholder {
+    color: transparent;
+}
+
+.formInput:focus {
+    outline: none;
+    border-bottom-color: #3b82f6; /* blue-500 */
+}
+
+.formLabel {
+    position: absolute;
+    left: 0;
+    top: 0.5rem;
+    font-size: 1rem;
+    color: #6b7280; /* gray-500 */
+    transition: all 0.2s ease-out;
+    pointer-events: none;
+}
+
+.formInput:focus ~ .formLabel,
+.formInput:not(:placeholder-shown) ~ .formLabel {
+    top: -1.25rem;
+    font-size: 0.75rem; /* 12px */
+    color: #4b5563; /* gray-600 */
+}
+
+.submitButton {
+    width: 100%;
+    background-color: #3b82f6; /* blue-500 */
+    color: white;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-top: 2rem;
+}
+
+.submitButton:hover {
+    background-color: #2563eb; /* blue-600 */
+}
+
+.submitButton:disabled {
+    background-color: #9ca3af;
+    cursor: not-allowed;
+}
+
+.googleButton {
+    composes: submitButton; /* Mewarisi style dari submitButton */
+    background-color: #db4437;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.googleButton:hover {
+    background-color: #c53727;
+}
+
+.divider {
+    text-align: center;
+    color: #9ca3af;
+    margin: 1.5rem 0;
+}
+
+.switchLink {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.875rem;
+}
+
+.switchLink a {
+    color: #3b82f6;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.switchLink a:hover {
+    text-decoration: underline;
+}
+
+/* Responsif untuk mobile */
+@media (max-width: 640px) {
+    .gradientBg {
+        transform: none;
+    }
+}

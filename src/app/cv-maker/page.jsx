@@ -1,363 +1,254 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "../../lib/supabaseClient";
 import styles from "./CvMaker.module.css";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 import { ModernTemplate, ClassicTemplate, ProfessionalTemplate } from './components/templates';
+import Link from 'next/link';
 
 export default function CvMaker() {
+  const router = useRouter();
+  
   const [formData, setFormData] = useState({
-    name: "",
-    profession: "",
-    address: "",
-    phone: "",
-    email: "",
-    linkedin: "",
-    github: "",
+    personalInfo: {
+      name: "", profession: "", address: "", phone: "", email: "", linkedin: "", github: "",
+    },
     summary: "",
-    educationDegree: "",
-    educationInstitution: "",
-    educationDate: "",
-    educationGPA: "",
-    jobTitle: "",
-    company: "",
-    jobDate: "",
-    jobDescription: "",
+    experiences: [{ id: Date.now(), jobTitle: "", company: "", date: "", description: "" }],
+    educations: [{ id: Date.now(), degree: "", institution: "", date: "", gpa: "" }],
+    projects: [{ id: Date.now(), name: "", date: "", description: "" }],
     skills: "",
-    projectName: "",
-    projectDate: "",
-    projectDescription: "",
   });
 
   const [loadingSummary, setLoadingSummary] = useState(false);
+  const [loadingSave, setLoadingSave] = useState(false);
   const [activeSection, setActiveSection] = useState("personal");
   const [selectedTemplate, setSelectedTemplate] = useState("modern");
 
-  const downloadPDF = async () => {
-    try {
-      const element = document.getElementById("cvPreview");
-      if (!element) return;
-  
-      // Simpan style asli
-      const originalStyles = {
-        width: element.style.width,
-        height: element.style.height,
-        overflow: element.style.overflow
-      };
-  
-      // Set ukuran A4 untuk konversi
-      const pageWidth = 210; // mm (A4)
-      const pageHeight = 297; // mm (A4)
-      const pixelRatio = 2; // Untuk kualitas lebih tinggi
-  
-      element.style.width = `${pageWidth}mm`;
-      element.style.height = "auto"; // Biarkan tinggi mengikuti konten
-      element.style.overflow = "visible";
-  
-      const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "mm",
-        format: "a4",
-      });
-  
-      // Hitung tinggi elemen dalam pixel
-      const canvas = await html2canvas(element, {
-        scale: pixelRatio,
-        logging: false,
-        useCORS: true,
-        scrollY: 0,
-      });
-  
-      const imgData = canvas.toDataURL("image/png");
-      const imgWidth = pageWidth;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-  
-      // Split ke multi-halaman jika terlalu tinggi
-      let heightLeft = imgHeight;
-      let position = 0;
-      const pageHeightMM = pageHeight - 20; // Beri margin bawah
-  
-      while (heightLeft > 0) {
-        const newPageHeight = heightLeft > pageHeightMM ? pageHeightMM : heightLeft;
-        pdf.addImage(
-          imgData,
-          "PNG",
-          0, // x
-          -position, // y (negatif untuk 'scroll' ke bagian berikutnya)
-          imgWidth,
-          imgHeight
-        );
-        
-        heightLeft -= pageHeightMM;
-        position += pageHeightMM;
-  
-        if (heightLeft > 0) {
-          pdf.addPage();
-        }
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        router.push('/login');
       }
-  
-      // Kembalikan style asli
-      Object.assign(element.style, originalStyles);
-  
-      pdf.save("cv.pdf");
-    } catch (error) {
-      console.error("Error generating PDF:", error);
-      alert("Failed to generate PDF");
+    };
+    checkUser();
+  }, [router]);
+
+  const handleSimpleChange = (e) => {
+    const { name, value } = e.target;
+    if (Object.keys(formData.personalInfo).includes(name)) {
+      setFormData(prev => ({ ...prev, personalInfo: { ...prev.personalInfo, [name]: value } }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
     }
   };
 
-  const handleChange = (e) => {
-    const { id, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [id]: value,
-    }));
+  const handleArrayChange = (section, index, event) => {
+    const { name, value } = event.target;
+    const newArray = formData[section].map((item, i) => i === index ? { ...item, [name]: value } : item);
+    setFormData(prev => ({ ...prev, [section]: newArray }));
   };
 
+  const addItem = (section) => {
+    const newItem = {
+      experiences: { id: Date.now(), jobTitle: "", company: "", date: "", description: "" },
+      educations: { id: Date.now(), degree: "", institution: "", date: "", gpa: "" },
+      projects: { id: Date.now(), name: "", date: "", description: "" },
+    };
+    setFormData(prev => ({ ...prev, [section]: [...prev[section], newItem[section]] }));
+  };
+
+  const removeItem = (section, index) => {
+    if (formData[section].length > 1) {
+      const newArray = formData[section].filter((_, i) => i !== index);
+      setFormData(prev => ({ ...prev, [section]: newArray }));
+    } else {
+      alert("Setidaknya harus ada satu entri.");
+    }
+  };
+
+  const handleSaveCv = async () => {
+    const cvName = prompt("Beri nama untuk CV ini:", `CV untuk ${formData.personalInfo.profession || 'Pekerjaan Baru'}`);
+    if (!cvName || cvName.trim() === "") return;
+
+    setLoadingSave(true);
+    try {
+      const response = await fetch('/api/cv', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ cv_name: cvName, cv_data: formData }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error);
+      alert("CV berhasil disimpan!");
+      router.push('/my-cvs');
+    } catch (error) {
+      alert("Gagal menyimpan CV: " + error.message);
+    } finally {
+      setLoadingSave(false);
+    }
+  };
+  
   const generateSummary = async () => {
     setLoadingSummary(true);
     try {
       const res = await fetch("/api/generateSummary", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json" // Explicitly ask for JSON
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ formData }),
       });
   
       if (!res.ok) {
-        // Try to parse error as JSON first
-        const errorData = await res.json().catch(() => null);
-        throw new Error(errorData?.error || `HTTP error! status: ${res.status}`);
+        const errorData = await res.json().catch(() => ({ error: "Terjadi kesalahan pada server." }));
+        throw new Error(errorData.error);
       }
   
-      // Handle both JSON and plaintext responses
-      const contentType = res.headers.get("content-type");
-      let data;
+      const data = await res.json();
+      const summary = data.summary?.trim() || "Gagal membuat ringkasan.";
       
-      if (contentType?.includes("application/json")) {
-        data = await res.json();
-      } else {
-        const text = await res.text();
-        try {
-          // Try to parse as JSON if it's stringified JSON
-          data = JSON.parse(text);
-        } catch {
-          // If plaintext, wrap it as JSON
-          data = { summary: text };
-        }
-      }
-  
-      // Clean the summary text
-      const summary = data.summary?.replace(/^plaintext\s*/i, "").trim();
-      
-      setFormData(prev => ({
-        ...prev,
-        summary: summary || "Failed to generate summary"
-      }));
+      setFormData(prev => ({ ...prev, summary: summary }));
   
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error generating summary:", error);
       alert(error.message);
     } finally {
       setLoadingSummary(false);
     }
   };
-  const downloadCV = () => {
-    const content = `
-${formData.name}
-${formData.profession}
-${formData.address} | ${formData.phone} | ${formData.email}
 
-SUMMARY
-${formData.summary}
+  const downloadPDF = async () => {
+    // State untuk loading bisa ditambahkan jika perlu
+    console.log("Preparing to download high-quality PDF...");
 
-EDUCATION
-${formData.educationDegree}
-${formData.educationInstitution}
-${formData.educationDate}
-GPA: ${formData.educationGPA}
+    try {
+      const response = await fetch('/api/generate-cv', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          formData: formData, // Kirim data CV
+          templateName: selectedTemplate.charAt(0).toUpperCase() + selectedTemplate.slice(1) + 'Template' // Contoh: 'ModernTemplate'
+        }),
+      });
 
-WORK EXPERIENCE
-${formData.jobTitle} at ${formData.company} (${formData.jobDate})
-${formData.jobDescription}
+      if (!response.ok) {
+        throw new Error('Gagal membuat PDF di server.');
+      }
 
-SKILLS
-${formData.skills}
+      // Logika untuk download file blob
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = `CV_${formData.personalInfo.name.replace(/\s+/g, '_')}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      a.remove();
 
-PROJECTS
-${formData.projectName} (${formData.projectDate})
-${formData.projectDescription}
-`;
-
-    const element = document.createElement("a");
-    const file = new Blob([content], { type: "text/plain" });
-    element.href = URL.createObjectURL(file);
-    element.download = "cv.txt";
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
+    } catch (error) {
+      console.error("Download PDF error:", error);
+      alert(error.message);
+    }
   };
 
+
+  const renderSelectedTemplate = () => {
+    return (
+      <>
+        {selectedTemplate === 'modern' && <ModernTemplate formData={formData} />}
+        {selectedTemplate === 'classic' && <ClassicTemplate formData={formData} />}
+        {selectedTemplate === 'professional' && <ProfessionalTemplate formData={formData} />}
+      </>
+    );
+  };
+  
   const renderFormSection = () => {
     switch (activeSection) {
       case "personal":
         return (
           <>
-            <h2>Personal Information</h2>
-            {[
-              { label: "Full Name", id: "name", type: "text" },
-              { label: "Profession", id: "profession", type: "text" },
-              { label: "Address", id: "address", type: "text" },
-              { label: "Phone Number", id: "phone", type: "text" },
-              { label: "Email", id: "email", type: "email" },
-              { label: "LinkedIn Profile", id: "linkedin", type: "text" },
-              { label: "GitHub Profile", id: "github", type: "text" },
-            ].map(({ label, id, type }) => (
-              <div key={id} className={styles.formGroup}>
-                <label htmlFor={id}>{label}</label>
-                <input
-                  id={id}
-                  type={type}
-                  className={styles.formControl}
-                  value={formData[id]}
-                  onChange={handleChange}
-                  required
-                />
+            <h2>Informasi Pribadi</h2>
+            {Object.entries(formData.personalInfo).map(([key, value]) => (
+              <div key={key} className={styles.formGroup}>
+                <label htmlFor={key}>{key.charAt(0).toUpperCase() + key.slice(1)}</label>
+                <input id={key} name={key} type="text" className={styles.formControl} value={value} onChange={handleSimpleChange}/>
               </div>
             ))}
-          
           </>
         );
-      case "education":
+      case "summary":
         return (
           <>
-            <h2>Education</h2>
-            {[
-              { label: "Degree", id: "educationDegree" },
-              { label: "Institution", id: "educationInstitution" },
-              { label: "Date", id: "educationDate" },
-              { label: "GPA/Score", id: "educationGPA" },
-            ].map(({ label, id }) => (
-              <div key={id} className={styles.formGroup}>
-                <label htmlFor={id}>{label}</label>
-                <input
-                  id={id}
-                  type="text"
-                  className={styles.formControl}
-                  value={formData[id]}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            ))}
+            <h2>Ringkasan Profesional</h2>
+            <div className={styles.formGroup}>
+              <textarea name="summary" rows={7} className={styles.formControl} value={formData.summary} onChange={handleSimpleChange} placeholder="Jelaskan diri Anda secara profesional..."/>
+            </div>
+            <button type="button" onClick={generateSummary} className={styles.btn} disabled={loadingSummary}>
+              {loadingSummary ? "Membuat..." : "Buat Ringkasan dengan AI"}
+            </button>
           </>
         );
       case "experience":
         return (
           <>
-            <h2>Work Experience</h2>
-            {[
-              { label: "Job Title", id: "jobTitle" },
-              { label: "Company", id: "company" },
-              { label: "Date", id: "jobDate" },
-            ].map(({ label, id }) => (
-              <div key={id} className={styles.formGroup}>
-                <label htmlFor={id}>{label}</label>
-                <input
-                  id={id}
-                  type="text"
-                  className={styles.formControl}
-                  value={formData[id]}
-                  onChange={handleChange}
-                  required
-                />
+            <h2>Pengalaman Kerja</h2>
+            {formData.experiences.map((exp, index) => (
+              <div key={exp.id} className={styles.formBlock}>
+                <h4>Pengalaman #{index + 1}</h4>
+                <input name="jobTitle" value={exp.jobTitle} onChange={(e) => handleArrayChange('experiences', index, e)} placeholder="Posisi" className={styles.formControl} />
+                <input name="company" value={exp.company} onChange={(e) => handleArrayChange('experiences', index, e)} placeholder="Perusahaan" className={styles.formControl} />
+                <input name="date" value={exp.date} onChange={(e) => handleArrayChange('experiences', index, e)} placeholder="Contoh: 2020 - Sekarang" className={styles.formControl} />
+                <textarea name="description" value={exp.description} onChange={(e) => handleArrayChange('experiences', index, e)} placeholder="Deskripsi pekerjaan Anda..." className={styles.formControl} rows="3" />
+                {formData.experiences.length > 1 && <button type="button" onClick={() => removeItem('experiences', index)} className={styles.btnRemove}>Hapus Pengalaman Ini</button>}
               </div>
             ))}
-            <div className={styles.formGroup}>
-              <label htmlFor="jobDescription">Description</label>
-              <textarea
-                id="jobDescription"
-                className={styles.formControl}
-                rows={4}
-                value={formData.jobDescription}
-                onChange={handleChange}
-                placeholder="Describe your job responsibilities"
-                required
-              />
-            </div>
+            <button type="button" onClick={() => addItem('experiences')} className={styles.btnAdd}>+ Tambah Pengalaman</button>
           </>
         );
+      case "education":
+          return (
+            <>
+              <h2>Pendidikan</h2>
+              {formData.educations.map((edu, index) => (
+                <div key={edu.id} className={styles.formBlock}>
+                  <h4>Pendidikan #{index + 1}</h4>
+                  <input name="degree" value={edu.degree} onChange={(e) => handleArrayChange('educations', index, e)} placeholder="Gelar (Contoh: S1 Sistem Informasi)" className={styles.formControl} />
+                  <input name="institution" value={edu.institution} onChange={(e) => handleArrayChange('educations', index, e)} placeholder="Institusi" className={styles.formControl} />
+                  <input name="date" value={edu.date} onChange={(e) => handleArrayChange('educations', index, e)} placeholder="Contoh: 2021 - 2025" className={styles.formControl} />
+                  <input name="gpa" value={edu.gpa} onChange={(e) => handleArrayChange('educations', index, e)} placeholder="IPK (Contoh: 3.85)" className={styles.formControl} />
+                  {formData.educations.length > 1 && <button type="button" onClick={() => removeItem('educations', index)} className={styles.btnRemove}>Hapus Pendidikan Ini</button>}
+                </div>
+              ))}
+              <button type="button" onClick={() => addItem('educations')} className={styles.btnAdd}>+ Tambah Pendidikan</button>
+            </>
+          );
+      case "projects":
+        return (
+            <>
+              <h2>Proyek</h2>
+              {formData.projects.map((proj, index) => (
+                <div key={proj.id} className={styles.formBlock}>
+                   <h4>Proyek #{index + 1}</h4>
+                  <input name="name" value={proj.name} onChange={(e) => handleArrayChange('projects', index, e)} placeholder="Nama Proyek" className={styles.formControl} />
+                  <input name="date" value={proj.date} onChange={(e) => handleArrayChange('projects', index, e)} placeholder="Tahun" className={styles.formControl} />
+                  <textarea name="description" value={proj.description} onChange={(e) => handleArrayChange('projects', index, e)} placeholder="Deskripsi proyek..." className={styles.formControl} rows="3" />
+                  {formData.projects.length > 1 && <button type="button" onClick={() => removeItem('projects', index)} className={styles.btnRemove}>Hapus Proyek Ini</button>}
+                </div>
+              ))}
+              <button type="button" onClick={() => addItem('projects')} className={styles.btnAdd}>+ Tambah Proyek</button>
+            </>
+          );
       case "skills":
         return (
           <>
-            <h2>Skills</h2>
+            <h2>Keahlian</h2>
             <div className={styles.formGroup}>
-              <label htmlFor="skills">List your skills (comma separated)</label>
-              <input
-                id="skills"
-                type="text"
-                className={styles.formControl}
-                value={formData.skills}
-                onChange={handleChange}
-                placeholder="JavaScript, HTML, CSS, React"
-                required
-              />
-            </div>
-          </>
-        );
-      case "projects":
-        return (
-          <>
-            <h2>Projects</h2>
-            {[
-              { label: "Project Name", id: "projectName" },
-              { label: "Date", id: "projectDate" },
-            ].map(({ label, id }) => (
-              <div key={id} className={styles.formGroup}>
-                <label htmlFor={id}>{label}</label>
-                <input
-                  id={id}
-                  type="text"
-                  className={styles.formControl}
-                  value={formData[id]}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            ))}
-            <div className={styles.formGroup}>
-              <label htmlFor="projectDescription">Description</label>
-              <textarea
-                id="projectDescription"
-                className={styles.formControl}
-                rows={4}
-                value={formData.projectDescription}
-                onChange={handleChange}
-                placeholder="Describe the project and your contributions"
-                required
-              />
-                <div className={styles.formGroup}>
-              <label htmlFor="summary">Professional Summary</label>
-              <textarea
-                id="summary"
-                rows={4}
-                className={styles.formControl}
-                value={formData.summary}
-                onChange={handleChange}
-                placeholder="Describe your professional summary"
-                required
-              />
-            </div>
-            <button
-              type="button"
-              onClick={generateSummary}
-              className={styles.btn}
-              disabled={loadingSummary}
-            >
-              {loadingSummary ? "Generating summary..." : "Generate AI Summary"}
-            </button>
+              <label htmlFor="skills">Sebutkan keahlian Anda (pisahkan dengan koma)</label>
+              <textarea id="skills" name="skills" rows={4} className={styles.formControl} value={formData.skills} onChange={handleSimpleChange} placeholder="Contoh: JavaScript, HTML, CSS, React" />
             </div>
           </>
         );
@@ -366,120 +257,61 @@ ${formData.projectDescription}
     }
   };
 
-  const renderSelectedTemplate = () => {
-    switch(selectedTemplate) {
-      case "modern":
-        return <ModernTemplate formData={formData} />;
-      case "classic":
-        return <ClassicTemplate formData={formData} />;
-      case "professional":
-        return <ProfessionalTemplate formData={formData} />;
-      default:
-        return <ModernTemplate formData={formData} />;
-    }
-  };
-
   return (
     <div className={styles.cvContainer}>
-      {/* Form Section */}
       <div className={styles.formSection}>
-      <a 
-  href="#"
-  onClick={(e) => {
-    e.preventDefault();
-    window.history.back();
-  }}
-  className={styles.backLink}
->
-  <span className={styles.backIcon}>&lt;</span> Back
-</a>
-        <h1 style={{textAlign:"center "}}>CV Maker</h1>
-        <p style={{textAlign:"center "}}>  ⚠️ This feature is under development. Please excuse any shortcomings.</p>
-        <p style={{textAlign:"center "}}>⚠️ For better experience use a PC.</p>
+        <Link href="/dashboard" className={styles.backLink}>
+          <span className={styles.backIcon}>&lt;</span> Kembali ke Dashboard
+        </Link>
+        <h1 style={{textAlign:"center"}}>CV Maker</h1>
         
-        <form onSubmit={(e) => e.preventDefault()}>
-          <div className={styles.sectionButtons}>
-            <button 
-              type="button"
-              onClick={() => setActiveSection('personal')}
-              className={`${styles.sectionButton} ${activeSection === 'personal' ? styles.active : ''}`}
-            >
-              Personal Info
-            </button>
-            
-            <button 
-              type="button"
-              onClick={() => setActiveSection('education')}
-              className={`${styles.sectionButton} ${activeSection === 'education' ? styles.active : ''}`}
-            >
-              Education
-            </button>
-            
-            <button 
-              type="button"
-              onClick={() => setActiveSection('experience')}
-              className={`${styles.sectionButton} ${activeSection === 'experience' ? styles.active : ''}`}
-            >
-              Experience
-            </button>
-            
-            <button 
-              type="button"
-              onClick={() => setActiveSection('skills')}
-              className={`${styles.sectionButton} ${activeSection === 'skills' ? styles.active : ''}`}
-            >
-              Skills
-            </button>
-            
-            <button 
-              type="button"
-              onClick={() => setActiveSection('projects')}
-              className={`${styles.sectionButton} ${activeSection === 'projects' ? styles.active : ''}`}
-            >
-              Projects
-            </button>
-          </div>
-          
-          <div className={styles.formSectionContent}>
-            {renderFormSection()}
-          </div>
-          
-          <div className={styles.actionButtons}>
-            <button 
-              type="button" 
-              onClick={downloadPDF} 
-              className={styles.btn}
-            >
-              Download PDF
-            </button>
-          </div>
+        <div className={styles.sectionButtons}>
+            {['personal', 'summary', 'experience', 'education', 'projects', 'skills'].map(section => (
+                <button 
+                  key={section}
+                  type="button"
+                  onClick={() => setActiveSection(section)}
+                  className={`${styles.sectionButton} ${activeSection === section ? styles.active : ''}`}
+                >
+                  {section.charAt(0).toUpperCase() + section.slice(1)}
+                </button>
+            ))}
+        </div>
+        
+        <form onSubmit={(e) => e.preventDefault()} className={styles.formSectionContent}>
+          {renderFormSection()}
         </form>
+        
+        <div className={styles.actionButtons}>
+            <button type="button" onClick={handleSaveCv} className={styles.btn} disabled={loadingSave}>
+                {loadingSave ? "Menyimpan..." : "Simpan CV"}
+            </button>
+            <button type="button" onClick={downloadPDF} className={styles.btn}>
+                Download PDF
+            </button>
+        </div>
       </div>
-
-      {/* Preview Section */}
-      <div className={styles.previewSection}>
-        <div className={styles.templateSelectorContainer}>
-         
-          <div className={styles.templateSelector}>
-            <label htmlFor="templateSelect">Template:</label>
-            <select
-              id="templateSelect"
-              value={selectedTemplate}
-              onChange={(e) => setSelectedTemplate(e.target.value)}
-              className={styles.templateDropdown}
-            >
+ 
+     <div className={styles.previewSection}>
+  <div className={styles.templateSelectorContainer}>
+ <div className={styles.templateSelector}>
+            <label htmlFor="templateSelect">Pilih Template:</label>
+            <select id="templateSelect" value={selectedTemplate} onChange={(e) => setSelectedTemplate(e.target.value)} className={styles.templateDropdown}>
               <option value="modern">Modern</option>
               <option value="classic">Classic</option>
               <option value="professional">Professional</option>
             </select>
-          </div>
-        </div>
-        <div className={styles.previewHeader}>
-            <h2 className={styles.previewTitle}>CV Preview</h2>
-          </div>
-        <div id="cvPreview" className={styles.cvPreview}>
-          {renderSelectedTemplate()}
-        </div>
+          </div>  </div>
+  <div className={styles.previewHeader}>
+    <h2 className={styles.previewTitle}>CV Preview</h2>
+  </div>
+
+  {/* --- UBAH BAGIAN INI --- */}
+  <div className={styles.previewViewport}>
+    <div id="cvPreview" className={styles.cvPaper}>
+      {renderSelectedTemplate()}
+    </div>
+  </div>
       </div>
     </div>
   );

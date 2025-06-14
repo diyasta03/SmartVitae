@@ -5,6 +5,7 @@ import FeatureSection from './home/FeatureSection';
 import ProcessSection from './home/ProcessSection';
 import TestimonialSection  from './home/TestimonialSection';
 import CTASection from './home/CTASection';
+import Footer from './components/Footer/Footer';
 
 function HomePage() {
 
@@ -18,6 +19,7 @@ function HomePage() {
 <TestimonialSection />
 <CTASection/>
     </main>
+        <Footer />
 
     </div>
   );

@@ -1,0 +1,99 @@
+/* History.module.css */
+
+.pageContainer {
+    padding: 2rem;
+    background-color: #f9fafb; /* gray-50 */
+    min-height: calc(100vh - 4rem);
+}
+
+.headerTitle {
+    font-size: 2.25rem; /* 36px */
+    font-weight: 700;
+    color: #1f2937; /* gray-800 */
+    margin-bottom: 2rem;
+}
+
+.listContainer {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.historyItem {
+    padding: 1rem 1.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    transition: box-shadow 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; /* Agar responsif di mobile */
+    gap: 1rem;
+}
+
+.historyItem:hover {
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+.historyDetails {
+    flex-grow: 1;
+}
+
+.jobDescription {
+    font-weight: 600;
+    font-size: 1.125rem; /* 18px */
+    color: #111827;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 300px; /* Batasi lebar agar tidak terlalu panjang */
+}
+
+.metaInfo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-top: 0.25rem;
+}
+
+.metaInfo span {
+    font-weight: 700;
+}
+
+.historyActions {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0; /* Mencegah tombol mengecil */
+}
+
+.detailButton, .deleteButton {
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-weight: 500;
+    text-decoration: none;
+    text-align: center;
+    border: 1px solid transparent;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.detailButton {
+    background-color: #3b82f6; /* blue-500 */
+    color: white;
+}
+.detailButton:hover {
+    background-color: #2563eb; /* blue-600 */
+}
+
+.deleteButton {
+    background-color: #fee2e2; /* red-100 */
+    color: #ef4444; /* red-500 */
+}
+.deleteButton:hover {
+    background-color: #fca5a5; /* red-300 */
+    color: #b91c1c; /* red-700 */
+}

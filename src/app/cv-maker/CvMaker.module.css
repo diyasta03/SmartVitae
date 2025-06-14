@@ -19,6 +19,24 @@
   background-color: var(--light-gray);
   overflow-y: auto;
 }
+.previewViewport {
+  flex-grow: 1; /* Biarkan viewport mengisi sisa ruang */
+  display: flex;
+  justify-content: center; /* Pusatkan kertas secara horizontal */
+  align-items: flex-start; /* Sejajarkan kertas dari atas */
+  overflow: hidden; /* Sembunyikan bagian dari kertas yang di-scale keluar */
+  padding-top: 1rem;
+}
+.cvPaper {
+  width: 210mm;
+  min-height: 297mm;
+  background: white;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+
+  /* Atur skala agar pas. Anda bisa sesuaikan nilai 0.6 ini */
+  transform: scale(0.6);
+  transform-origin: top center;
+}
 
 .formHeader {
   margin-bottom: 2rem;
@@ -75,13 +93,16 @@ textarea.formControl {
 
 /* Dalam file CSS Anda */
 .cvPreview {
-  width: 100%;
-  max-width: 210mm; /* Ukuran A4 */
-  margin: 0 auto;
+  width: 210mm; /* Atur lebar sesuai ukuran asli A4 */
+  min-height: 297mm; /* Atur tinggi sesuai ukuran asli A4 */
   background: white;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  overflow: hidden; /* Hilangkan scroll */
-  transform-origin: top center; /* Untuk scaling yang lebih baik */
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  
+  /* --- KUNCI UTAMA DI SINI --- */
+  transform: scale(0.65); /* Kecilkan menjadi 65% dari ukuran asli */
+  transform-origin: top center; /* Titik pusat scaling dari atas tengah */
+  
+  /* Kita tidak lagi memerlukan overflow di sini */
 }
 .cvTemplate {
   font-family: Arial, sans-serif;
@@ -152,11 +173,13 @@ textarea.formControl {
   .formSection,
   
 .previewSection {
-  width: 100%;
-  overflow: auto;
-  padding: 20px;
-  box-sizing: border-box;
+  flex: 1;
+  padding: 2rem;
+  background-color: #f8f9fa; /* Warna latar belakang area */
+  display: flex;
+  flex-direction: column;
 }
+
 }
 
 /* Template Selector - Elevated Position with Proper Spacing */
@@ -351,3 +374,4 @@ textarea.formControl {
     margin-bottom: 0.3rem;
   }
 }
+

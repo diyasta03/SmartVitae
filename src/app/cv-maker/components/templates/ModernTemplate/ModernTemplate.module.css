@@ -1,84 +1,135 @@
-.container {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 2rem;
-  color: #333;
-  line-height: 1.6;
-        text-align: justify;
+/* ModernTemplate.module.css */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
+.cvContainer {
+    display: flex;
+    font-family: 'Roboto', sans-serif;
+    color: #333;
+    background-color: white;
+    width: 210mm; /* A4 width */
+    min-height: 297mm; /* A4 height */
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* Kolom Kiri (Sidebar) */
+.sidebar {
+    width: 35%;
+    background-color: #2c3e50; /* Dark Blue-Gray */
+    color: #ecf0f1; /* Light Gray */
+    padding: 20px;
 }
 
 .header {
-  text-align: center;
-  margin-bottom: 1rem;
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #34495e;
 }
 
-.header h1 {
-  color: #2c3e50;
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem;
+.name {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+    color: white;
 }
 
-.header h2 {
-  color: #7f8c8d;
-  font-weight: normal;
-  font-size: 1.3rem;
-}
-
-.contactInfo {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  flex-wrap: wrap;
+.profession {
+    font-size: 14px;
+    font-weight: 400;
+    margin: 5px 0 0;
+    color: #bdc3c7; /* Lighter gray */
 }
 
 .section {
-  margin-bottom: 2rem;
+    margin-bottom: 20px;
 }
 
-.section h3 {
-  color: #3498db;
-  border-bottom: 2px solid #3498db;
-  padding-bottom: 0.3rem;
-  margin-bottom: 1rem;
+.sectionTitle {
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #1abc9c; /* Teal */
+    border-bottom: 2px solid #1abc9c;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
 }
 
-.educationItem h4 {
-  font-size: 1.1rem;
-  margin-bottom: 0.3rem;
+.contactItem {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 12px;
 }
 
-.experienceItem {
-  margin-bottom: 1.5rem;
+.contactItem i {
+    width: 20px;
+    text-align: center;
+    margin-right: 10px;
+    color: #1abc9c;
 }
 
-.jobHeader {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 0.3rem;
+.skillsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
-.company {
-  font-weight: bold;
-  margin-bottom: 0.5rem;
+.skillPill {
+    background-color: #34495e;
+    color: #ecf0f1;
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 12px;
 }
 
-.description {
-  white-space: pre-line;
-}
-.skillsGrid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
+/* Kolom Kanan (Konten Utama) */
+.mainContent {
+    width: 65%;
+    padding: 25px;
 }
 
-.skillTag {
-  background-color: #3498db;
-  color: white;
-  padding: 0.3rem 0.8rem;
-  border-radius: 4px;
-  font-size: 0.9rem;
+.summary {
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.entry {
+    margin-bottom: 20px;
+}
+
+.entry:last-child {
+    margin-bottom: 0;
+}
+
+.entryHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 5px;
+}
+
+.entryTitle {
+    font-size: 15px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0;
+}
+
+.entryDate {
+    font-size: 12px;
+    font-style: italic;
+    color: #7f8c8d;
+}
+
+.entrySubtitle {
+    font-size: 13px;
+    font-weight: 500;
+    color: #34495e;
+    margin: 0 0 8px 0;
+}
+
+.entryDescription {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #555;
 }
