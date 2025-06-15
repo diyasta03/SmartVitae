@@ -2,8 +2,7 @@
   "functions": {
     "pages/api/generate-cv.js": {
       "memory": 1024,
-      "maxDuration": 30,
-      "runtime": "nodejs18.x"
+      "maxDuration": 30
     }
   }
 }
