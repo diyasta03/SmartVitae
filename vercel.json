@@ -1,8 +1,13 @@
 {
   "functions": {
-    "pages/api/generate-cv.js": {
+    "api/generate-cv.js": {
       "memory": 1024,
       "maxDuration": 30
+    }
+  },
+  "build": {
+    "env": {
+      "CHROMIUM_PATH": "/var/task/node_modules/@sparticuz/chromium/bin"
     }
   }
 }
