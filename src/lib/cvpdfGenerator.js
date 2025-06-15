@@ -38,29 +38,29 @@ export async function generatePdfFromTemplate(data, templateFileName) {
     let browser = null;
 
     try {
-        // Membaca file template HTML dari direktori
         const templatePath = path.join(process.cwd(), 'src', 'lib', 'templates', templateFileName);
         const htmlTemplate = await fs.readFile(templatePath, 'utf-8');
 
-        // Mengkompilasi template dengan data yang diberikan
         const template = handlebars.compile(htmlTemplate);
         const finalHtml = template(safeData);
+        
+        // --- PERUBAHAN DI SINI ---
+        // Secara eksplisit memberitahu bahwa ini adalah lingkungan Vercel
+        chromium.setHeadlessMode = true;
+        chromium.setGraphicsMode = false;
 
-        // Menggunakan konfigurasi chromium khusus untuk serverless Vercel
         browser = await puppeteer.launch({
-          args: chromium.args,
-          defaultViewport: chromium.defaultViewport,
-          executablePath: await chromium.executablePath(),
-          headless: chromium.headless,
-          ignoreHTTPSErrors: true,
+            args: chromium.args,
+            defaultViewport: chromium.defaultViewport,
+            executablePath: await chromium.executablePath(),
+            headless: chromium.headless,
+            ignoreHTTPSErrors: true,
         });
+        // --- AKHIR PERUBAHAN ---
 
         const page = await browser.newPage();
-        
-        // Mengatur konten halaman dan menunggu semua aset (font, gambar dari CDN) selesai dimuat
         await page.setContent(finalHtml, { waitUntil: 'networkidle0' });
         
-        // Membuat PDF dengan format A4 dan memastikan background tercetak
         const pdfBuffer = await page.pdf({
             format: 'A4',
             printBackground: true,
@@ -69,12 +69,10 @@ export async function generatePdfFromTemplate(data, templateFileName) {
 
         return pdfBuffer;
     } catch (error) {
-        // Memberikan log error yang lebih detail di server
         console.error("Error in PDF Generation on Vercel:", error);
-        throw error; // Lempar error agar bisa ditangkap oleh API handler
+        throw error;
     } finally {
         if (browser !== null) {
-            // Menutup koneksi browser setelah selesai
             await browser.close();
         }
     }
