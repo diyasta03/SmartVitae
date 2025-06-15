@@ -1,14 +1,19 @@
-import chromium from '@sparticuz/chromium';
-import puppeteer from 'puppeteer-core';
-import fs from 'fs/promises';
-import path from 'path';
 import handlebars from 'handlebars';
+import path from 'path';
+import fs from 'fs/promises';
+import fetch from 'node-fetch'; // Gunakan node-fetch untuk melakukan HTTP POST ke PDFShift
 
-// Handlebars helpers
-handlebars.registerHelper('split', (str, sep) => (typeof str === 'string' ? str.split(sep) : []));
-handlebars.registerHelper('trim', (str) => (typeof str === 'string' ? str.trim() : ''));
+// Register helper seperti sebelumnya
+handlebars.registerHelper('split', function(str, separator) {
+  if (typeof str !== 'string') return [];
+  return str.split(separator);
+});
 
-// Safe data
+handlebars.registerHelper('trim', function(str) {
+  if (typeof str !== 'string') return '';
+  return str.trim();
+});
+
 const getSafeData = (data) => ({
   personalInfo: data.personalInfo || {},
   summary: data.summary || '',
@@ -21,28 +26,38 @@ const getSafeData = (data) => ({
 
 export async function generatePdfFromTemplate(data, templateFileName) {
   const safeData = getSafeData(data);
-  const templatePath = path.join(process.cwd(), 'public', 'templates', templateFileName);
-  const htmlTemplate = await fs.readFile(templatePath, 'utf-8');
-  const template = handlebars.compile(htmlTemplate);
-  const finalHtml = template(safeData);
 
-  const browser = await puppeteer.launch({
-    args: chromium.args,
-    defaultViewport: chromium.defaultViewport,
-executablePath: await chromium.executablePath() || '/usr/bin/chromium-browser',
-    headless: true,
-    ignoreHTTPSErrors: true,
-  });
+  try {
+    const templatePath = path.join(process.cwd(), 'src', 'lib', 'templates', templateFileName);
+    const htmlTemplate = await fs.readFile(templatePath, 'utf-8');
 
-  const page = await browser.newPage();
-  await page.setContent(finalHtml, { waitUntil: 'networkidle0' });
+    const compiledTemplate = handlebars.compile(htmlTemplate);
+    const finalHtml = compiledTemplate(safeData);
 
-  const pdfBuffer = await page.pdf({
-    format: 'A4',
-    printBackground: true,
-    margin: { top: '0mm', right: '0mm', bottom: '0mm', left: '0mm' },
-  });
+    // Kirim HTML ke PDFShift untuk dikonversi ke PDF
+    const response = await fetch('https://api.pdfshift.io/v3/convert/pdf', {
+      method: 'POST',
+      headers: {
+        'X-API-Key': process.env.PDFSHIFT_API_KEY, // Pastikan Anda menyimpan API Key ini di .env
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        source: finalHtml,
+        landscape: false,
+        use_print: true,
+      }),
+    });
 
-  await browser.close();
-  return pdfBuffer;
+    if (!response.ok) {
+      const err = await response.text();
+      throw new Error(`PDFShift error: ${response.status} - ${err}`);
+    }
+
+    const pdfBuffer = await response.buffer();
+    return pdfBuffer;
+
+  } catch (error) {
+    console.error("Error in PDFShift generation:", error);
+    throw error;
+  }
 }
