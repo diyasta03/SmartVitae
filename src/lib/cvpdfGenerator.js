@@ -1,5 +1,5 @@
 import puppeteer from 'puppeteer-core';
-import chromium from '@sparticuz/chromium-min';
+import chromium from '@sparticuz/chromium'; // <-- UBAH BARIS INI
 import fs from 'fs/promises';
 import path from 'path';
 import handlebars from 'handlebars';

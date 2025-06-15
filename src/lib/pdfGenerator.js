@@ -1,5 +1,5 @@
 import puppeteer from 'puppeteer-core'; // PERUBAHAN 1: Import dari puppeteer-core
-import chromium from '@sparticuz/chromium-min'; // PERUBAHAN 1: Import chromium untuk serverless
+import chromium from '@sparticuz/chromium'; // <-- UBAH BARIS INI
 import fs from 'fs/promises';
 import path from 'path';
 import handlebars from 'handlebars';
