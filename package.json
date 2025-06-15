@@ -6,9 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-      "postinstall": "cd node_modules/@sparticuz/chromium && node install.js"
-
+    "lint": "next lint"
+    
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
