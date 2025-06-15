@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV {{personalInfo.name}}</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* CSS dari ATSFriendlyTemplate.module.css, di-inline di sini */
+        @page {
+            size: A4;
+            margin: 0;
+        }
+        body {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 10pt;
+            line-height: 1.5;
+            color: #333;
+            margin: 0;
+        }
+
+        .cv-container {
+            font-family: 'Open Sans', sans-serif;
+            color: #333;
+            background-color: white;
+            width: 210mm;
+            min-height: 297mm;
+            padding: 25mm;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            line-height: 1.5;
+            box-sizing: border-box;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .name {
+            font-family: 'Lato', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 0 5px 0;
+            color: #2c3e50;
+            text-transform: uppercase;
+        }
+
+        .profession {
+            font-size: 16px;
+            font-weight: 600;
+            color: #555;
+            margin: 5px 0 0 0;
+        }
+
+        .contact-info {
+            font-size: 12px;
+            color: #666;
+            margin: 0;
+        }
+
+        .contact-info span {
+            margin: 0 3px;
+            white-space: nowrap;
+        }
+
+        .contact-info a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .contact-info a:hover {
+            text-decoration: underline;
+        }
+
+        .separator {
+            color: #999;
+        }
+
+        .section {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            page-break-inside: avoid;
+        }
+
+        .section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .section-title {
+            font-family: 'Lato', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: #2c3e50;
+            text-transform: uppercase;
+            margin: 0 0 10px 0;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #2c3e50;
+            display: inline-block;
+        }
+
+        .entry {
+            margin-bottom: 15px;
+            page-break-inside: avoid;
+        }
+
+        .entry:last-child {
+            margin-bottom: 0;
+        }
+
+        .entry-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+
+        .entry-subtitle {
+            font-size: 13px;
+            font-style: italic;
+            color: #666;
+            margin: 0 0 5px 0;
+        }
+
+        .content {
+            font-size: 13px;
+            color: #444;
+            margin: 0;
+            text-align: justify; /* <<< TAMBAHKAN INI */
+        }
+
+        /* Penyesuaian untuk list dalam content (jika digunakan untuk contoh atau deskripsi) */
+        .content ul {
+          padding-left: 20px;
+          margin-top: 5px;
+          margin-bottom: 0;
+          list-style-type: disc;
+        }
+
+        .content li {
+          margin-bottom: 3px;
+        }
+
+        .summary { /* <<< TAMBAHKAN KELAS INI UNTUK SUMMARY */
+            font-size: 13px;
+            line-height: 1.6;
+            text-align: justify; /* <<< TAMBAHKAN INI */
+        }
+    </style>
+</head>
+<body>
+    <div class="cv-container">
+        <header class="header">
+            <h1 class="name">{{personalInfo.name}}</h1>
+            <p class="profession">{{personalInfo.profession}}</p>
+            <p class="contact-info">
+                {{personalInfo.phone}}{{#if personalInfo.email}}<span class="separator"> | </span>{{/if}}
+                {{personalInfo.email}}{{#if personalInfo.address}}<span class="separator"> | </span>{{/if}}
+                {{personalInfo.address}}
+                {{#if personalInfo.linkedin}}<span class="separator"> | </span><a href="{{personalInfo.linkedin}}" target="_blank" rel="noopener noreferrer">{{personalInfo.linkedin}}</a>{{/if}}
+                {{#if personalInfo.github}}<span class="separator"> | </span><a href="{{personalInfo.github}}" target="_blank" rel="noopener noreferrer">{{personalInfo.github}}</a>{{/if}}
+            </p>
+        </header>
+
+        <section class="section">
+            <h2 class="section-title">RINGKASAN</h2>
+            <p class="summary">{{summary}}</p> </section>
+
+        <section class="section">
+            <h2 class="section-title">PENGALAMAN KERJA</h2>
+            {{#each experiences}}
+            <div class="entry">
+                <h3 class="entry-title">{{this.jobTitle}}</h3>
+                <p class="entry-subtitle">{{this.company}} | {{this.date}}</p>
+                <p class="content">{{this.description}}</p>
+            </div>
+            {{/each}}
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">PENDIDIKAN</h2>
+            {{#each educations}}
+            <div class="entry">
+                <h3 class="entry-title">{{this.degree}}</h3>
+                <p class="entry-subtitle">{{this.institution}} | {{this.date}}</p>
+                {{#if this.gpa}}<p class="content">IPK: {{this.gpa}}</p>{{/if}}
+            </div>
+            {{/each}}
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">PROYEK</h2>
+            {{#each projects}}
+            <div class="entry">
+                <h3 class="entry-title">{{this.name}}</h3>
+                <p class="entry-subtitle">{{this.date}}</p>
+                <p class="content">{{this.description}}</p>
+            </div>
+            {{/each}}
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">KEAHLIAN</h2>
+            <p class="content">{{skills}}</p>
+        </section>
+    </div>
+</body>
+</html>

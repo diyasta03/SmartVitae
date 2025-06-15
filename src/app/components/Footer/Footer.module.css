@@ -1,214 +1,246 @@
-.footer {
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-  color: #ffffff;
-  padding: 4rem 0 0;
-  position: relative;
-  overflow: hidden;
-}
+/* src/app/components/Footer/Footer.module.css */
 
-.footer::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: url('/images/footer-pattern.png') repeat;
-  opacity: 0.05;
-  pointer-events: none;
+.footer {
+  background-color: #1a202c; /* Warna latar belakang gelap (dark blue-gray) */
+  color: #a0aec0; /* Warna teks default (light gray) */
+  padding: 3rem 1.5rem; /* Padding atas bawah lebih besar */
+  font-size: 0.95rem;
+  line-height: 1.6;
 }
 
 .container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
+  max-width: 1200px; /* Lebar maksimal konten footer */
+  margin: 0 auto; /* Pusatkan konten */
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem; /* Jarak antar bagian utama footer */
 }
 
-.grid {
+.contentWrapper {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 3rem;
-  margin-bottom: 3rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Responsive grid columns */
+  gap: 2rem; /* Jarak antar kolom */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Garis pemisah atas bawah */
+  padding-bottom: 2.5rem;
 }
 
-.companyInfo {
-  max-width: 300px;
+.brandInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
-.logo {
-  font-size: 1.8rem;
+.logoLink {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  gap: 0.5rem;
+}
+
+.logoImage {
+  height: 35px; /* Sesuaikan ukuran logo gambar */
+  width: auto;
+}
+
+.logoText {
+  color: #edf2f7; /* Warna teks logo yang lebih terang */
+  font-size: 1.5rem;
   font-weight: 700;
-  margin-bottom: 1rem;
-  background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.025em; /* Sedikit spasi antar huruf */
 }
 
 .tagline {
-  color: #b8c2cc;
-  margin-bottom: 1.5rem;
-  line-height: 1.6;
+  color: #cbd5e0; /* Warna teks tagline */
+  font-size: 0.9rem;
+}
+
+.linksGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.linksHeading {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #edf2f7; /* Warna heading yang lebih terang */
+  margin-bottom: 0.75rem;
+}
+
+.linksList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.linkItem {
+  color: #a0aec0; /* Warna link default */
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.linkItem:hover {
+  color: #4a6cf7; /* Warna hover (biru cerah) */
+}
+
+.socialSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .socialLinks {
   display: flex;
-  gap: 1rem;
-}
-
-.socialLink {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-}
-
-.socialLink:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: translateY(-3px);
+  gap: 1rem; /* Jarak antar ikon sosial */
 }
 
 .socialIcon {
-  font-size: 1rem;
-  color: #ffffff;
-}
-
-.linksColumn {
-  display: flex;
-  flex-direction: column;
-}
-
-.columnTitle {
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin-bottom: 1.5rem;
-  position: relative;
-  padding-bottom: 0.5rem;
-}
-
-.columnTitle::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 40px;
-  height: 2px;
-  background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
-}
-
-.linkList {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
-}
-
-.link {
-  color: #b8c2cc;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  position: relative;
-  padding-left: 1rem;
-}
-
-.link::before {
-  content: '•';
-  position: absolute;
-  left: 0;
-  color: #4facfe;
-}
-
-.link:hover {
-  color: #ffffff;
-  padding-left: 1.2rem;
-}
-
-.contactList {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.contactItem {
   display: flex;
   align-items: center;
-  gap: 0.8rem;
-  color: #b8c2cc;
+  justify-content: center;
+  width: 40px; /* Ukuran lingkaran ikon */
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.08); /* Latar belakang transparan */
+  color: #cbd5e0; /* Warna ikon */
+  font-size: 1.2rem;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.contactIcon {
-  color: #4facfe;
-  font-size: 1rem;
+.socialIcon:hover {
+  background-color: #4a6cf7; /* Warna latar belakang hover */
+  color: #ffffff; /* Warna ikon hover */
 }
+
+/* Optional: Newsletter styles */
+.newsletterForm {
+  display: flex;
+  margin-top: 0.75rem;
+}
+
+.newsletterInput {
+  flex-grow: 1;
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px 0 0 6px;
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.newsletterInput::placeholder {
+  color: #cbd5e0;
+}
+
+.newsletterButton {
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 0 6px 6px 0;
+  background-color: #4a6cf7;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.newsletterButton:hover {
+  background-color: #2541b2;
+}
+
 
 .bottomBar {
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 1.5rem 0;
   display: flex;
-  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  gap: 1rem;
+  padding-top: 1.5rem;
+  color: #a0aec0;
+  font-size: 0.85rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1); /* Garis pemisah bawah */
 }
 
 .copyright {
-  color: #b8c2cc;
-  font-size: 0.9rem;
+  text-align: center; /* Default for mobile */
 }
 
-.legalLinks {
+.policyLinks {
   display: flex;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
-.legalLink {
-  color: #b8c2cc;
+.policyLinkItem {
+  color: #a0aec0;
   text-decoration: none;
-  font-size: 0.9rem;
-  transition: color 0.3s ease;
+  transition: color 0.2s ease;
 }
 
-.legalLink:hover {
-  color: #ffffff;
+.policyLinkItem:hover {
+  color: #4a6cf7;
 }
 
-/* Responsive Design */
+
+/* --- Responsive Adjustments --- */
 @media (max-width: 768px) {
-  .grid {
-    grid-template-columns: 1fr 1fr;
+  .contentWrapper {
+    grid-template-columns: 1fr; /* Tumpuk semua kolom di mobile */
+    text-align: center; /* Pusatkan teks */
   }
-  
-  .companyInfo {
-    grid-column: 1 / -1;
-    max-width: 100%;
+
+  .brandInfo,
+  .linksGroup,
+  .socialSection {
+    align-items: center; /* Pusatkan item di kolom */
   }
-  
+
+  .linksList {
+    align-items: center; /* Pusatkan link di list */
+  }
+
+  .socialLinks {
+    justify-content: center; /* Pusatkan ikon sosial */
+  }
+
   .bottomBar {
-    flex-direction: column;
-    text-align: center;
+    flex-direction: column; /* Tumpuk copyright dan policy links */
+    gap: 1rem;
   }
-  
-  .legalLinks {
-    flex-wrap: wrap;
-    justify-content: center;
+
+  .copyright {
+    order: 2; /* Pindahkan copyright ke bawah policy links */
+  }
+
+  .policyLinks {
+    order: 1; /* Pindahkan policy links ke atas copyright */
+    justify-content: center; /* Pusatkan policy links */
+  }
+
+  /* Optional: Newsletter adjustments */
+  .newsletterForm {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .newsletterInput,
+  .newsletterButton {
+    width: 100%;
+    border-radius: 6px; /* Full border-radius for stacked inputs/buttons */
+  }
+  .newsletterInput {
+    border-bottom-right-radius: 6px; /* Ensure all corners are rounded */
+    border-top-right-radius: 6px;
   }
 }
 
 @media (max-width: 480px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
-  
   .footer {
-    padding: 3rem 0 0;
+    padding: 2rem 1rem; /* Padding lebih kecil di layar sangat kecil */
+  }
+  .linksHeading {
+    font-size: 1rem;
+  }
+  .logoText {
+    font-size: 1.3rem;
   }
 }

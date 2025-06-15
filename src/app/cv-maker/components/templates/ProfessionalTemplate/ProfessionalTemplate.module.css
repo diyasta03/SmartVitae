@@ -1,185 +1,162 @@
-.container {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    max-width: 800px;
-    margin: 0 auto;
-    background: white;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    text-align: justify;
+/* ProfessionalATSTemplate.module.css */
+.cvContainer {
+  font-family: 'Calibri', 'Arial', sans-serif;
+  color: #333;
+  background-color: white;
+  width: 210mm;
+  min-height: 297mm;
+  padding: 20mm;
+  line-height: 1.5;
+  text-align: left;
+}
 
-  }
-  
-  .header {
-    background: #2c3e50;
-    color: white;
-    padding: 2rem;
-  }
-  
-  .nameTitle {
-    text-align: center;
-    margin-bottom: 1rem;
-  }
-  
-  .nameTitle h1 {
-    font-size: 2.2rem;
-    margin: 0;
-    letter-spacing: 1px;
-  }
-  
-  .nameTitle h2 {
-    font-size: 1.2rem;
-    font-weight: normal;
-    margin: 0.5rem 0 0;
-    color: #ecf0f1;
-  }
-  
-  .contactBar {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    margin-top: 1.5rem;
-    font-size: 0.9rem;
-  }
-  
-  .contactBar a {
-    color: #3498db;
-    text-decoration: none;
-  }
-  
-  .mainContent {
-    padding: 2rem;
-  }
-  
-  .section {
-    margin-bottom: 2rem;
-  }
-  
-  .section h3 {
-    color: #2c3e50;
-    border-bottom: 2px solid #3498db;
-    padding-bottom: 0.3rem;
-    font-size: 1.1rem;
-    margin-bottom: 1rem;
-  }
-  
-  .twoColumn {
-    display: flex;
-    gap: 2rem;
-  }
-  
-  .leftColumn {
-    flex: 1;
-  }
-  
-  .rightColumn {
-    flex: 2;
-  }
-  
-  .educationItem {
-    margin-bottom: 1.5rem;
-  }
-  
-  .educationItem h4 {
-    font-size: 1rem;
-    margin-bottom: 0.3rem;
-  }
-  
-  .institution {
-    font-weight: bold;
-  }
-  
-  .date {
-    color: #7f8c8d;
-    font-size: 0.9rem;
-  }
-  
-  .skillsContainer {
-    margin-top: 1rem;
-  }
-  
-  .skillItem {
-    margin-bottom: 0.8rem;
-  }
-  
-  .skillName {
-    font-size: 0.9rem;
-    margin-bottom: 0.2rem;
-  }
-  
-  .skillBar {
-    height: 6px;
-    background: #ecf0f1;
-    border-radius: 3px;
-  }
-  
-  .skillLevel {
-    height: 100%;
-    width: 80%;
-    background: #3498db;
-    border-radius: 3px;
-  }
-  
-  .experienceItem {
-    margin-bottom: 2rem;
-  }
-  
-  .jobHeader {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 0.3rem;
-  }
-  
-  .jobHeader h4 {
-    margin: 0;
-    font-size: 1rem;
-  }
-  
-  .company {
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-  }
-  
-  .responsibilities {
-    padding-left: 1.2rem;
-  }
-  
-  .responsibilities li {
-    margin-bottom: 0.4rem;
-    font-size: 0.9rem;
-  }
-  
-  .projectItem {
-    margin-bottom: 1.5rem;
-  }
-  
-  .projectHeader {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 0.3rem;
-  }
-  
-  .projectHeader h4 {
-    margin: 0;
-    font-size: 1rem;
-  }
-  
-  .projectDetails {
-    padding-left: 1.2rem;
-  }
-  
-  .projectDetails li {
-    margin-bottom: 0.4rem;
-    font-size: 0.9rem;
-  }
-  
-  /* Responsive adjustments */
-  @media (max-width: 768px) {
-    .twoColumn {
-      flex-direction: column;
-    }
-    
-    .contactBar {
-      gap: 1rem;
-      font-size: 0.8rem;
-    }
-  }
+/* Header Styles */
+.header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5mm;
+  padding-bottom: 5mm;
+  border-bottom: 1px solid #ddd;
+}
+
+.nameContainer {
+  flex: 2;
+}
+
+.contactContainer {
+  flex: 1;
+}
+
+.name {
+  font-size: 22pt;
+  font-weight: bold;
+  margin: 0 0 2mm 0;
+  color: #2c3e50;
+  text-transform: uppercase;
+}
+
+.profession {
+  font-size: 12pt;
+  font-weight: bold;
+  color: #555;
+  margin: 0;
+}
+
+.contactList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 10pt;
+}
+
+.contactList li {
+  margin-bottom: 2mm;
+  line-height: 1.4;
+}
+
+.link {
+  color: #2c3e50;
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+/* Section Styles */
+.section {
+  margin-bottom: 5mm;
+}
+
+.sectionTitle {
+  font-size: 14pt;
+  font-weight: bold;
+  color: #2c3e50;
+  margin: 0 0 3mm 0;
+  padding-bottom: 1mm;
+  border-bottom: 1px solid #ddd;
+  text-transform: uppercase;
+}
+
+.sectionContent {
+  padding: 0 0 0 3mm;
+}
+
+/* Entry Styles */
+.entry {
+  margin-bottom: 4mm;
+  padding-bottom: 3mm;
+}
+
+.entryWithBorder {
+  border-bottom: 1px solid #eee;
+}
+
+.entryHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1mm;
+}
+
+.entryTitle {
+  font-size: 12pt;
+  font-weight: bold;
+  color: #333;
+  margin: 0;
+}
+
+.entrySubtitle {
+  font-size: 10pt;
+  color: #555;
+  margin: 0 0 2mm 0;
+  font-style: italic;
+}
+
+.entryDate {
+  font-size: 10pt;
+  color: #555;
+  font-weight: normal;
+}
+
+.entryGpa {
+  font-size: 10pt;
+  color: #444;
+  margin: 1mm 0 0 0;
+}
+
+.entryDescription {
+  margin: 2mm 0 0 0;
+  padding-left: 5mm;
+  font-size: 10pt;
+  text-align: justify;
+}
+
+.entryDescription li {
+  margin-bottom: 1mm;
+  text-align: left;
+}
+
+/* Summary Styles */
+.summary {
+  font-size: 11pt;
+  line-height: 1.6;
+  margin: 0;
+  text-align: justify;
+}
+
+/* Skills Styles */
+.skillsList {
+  columns: 3;
+  column-gap: 5mm;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.skillItem {
+  break-inside: avoid;
+  margin-bottom: 1mm;
+  font-size: 10pt;
+  padding: 1mm 0;
+}

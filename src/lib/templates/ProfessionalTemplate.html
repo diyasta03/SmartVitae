@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV {{personalInfo.name}}</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* CSS dari ProfessionalTemplate.module.css yang relevan, di-inline di sini */
+        @page {
+            size: A4;
+            margin: 0; /* Kontrol margin dari padding .cv-container */
+        }
+        body {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            font-family: 'Roboto', sans-serif;
+            font-size: 10pt;
+            line-height: 1.5;
+            color: #333;
+            margin: 0;
+        }
+
+        .cv-container {
+            display: flex;
+            flex-direction: column;
+            width: 210mm;
+            min-height: 297mm;
+            box-sizing: border-box;
+            padding: 25mm 25mm 15mm 25mm;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #333;
+        }
+
+        .name-container {
+            flex-grow: 1;
+        }
+
+        .name {
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        .profession {
+            font-size: 14pt;
+            font-weight: 500;
+            color: #555;
+            margin: 5px 0 0;
+        }
+
+        .contact-container {
+            flex-shrink: 0;
+            text-align: right;
+        }
+
+        .contact-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .contact-list li {
+            font-size: 10pt;
+            margin-bottom: 3px;
+            white-space: nowrap;
+        }
+
+        .contact-list li:last-child {
+            margin-bottom: 0;
+        }
+
+        .link {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .link:hover {
+            text-decoration: underline;
+        }
+
+        .main-content {
+            flex-grow: 1;
+        }
+
+        .section {
+            margin-bottom: 20px;
+            page-break-inside: avoid;
+        }
+
+        .section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-title {
+            font-size: 14pt;
+            font-weight: 700;
+            color: #333;
+            text-transform: uppercase;
+            margin: 0 0 10px 0;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #333;
+        }
+
+        .section-content {
+            padding-top: 5px;
+        }
+
+        .summary {
+            font-size: 10pt;
+            line-height: 1.6;
+            text-align: justify;
+            margin-bottom: 0;
+        }
+
+        .skills-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .skill-item {
+            background-color: #f0f0f0;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 9pt;
+            white-space: nowrap;
+        }
+
+        .entry {
+            margin-bottom: 15px;
+            page-break-inside: avoid;
+        }
+
+        .entry-with-border {
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #ddd;
+        }
+
+        .entry-with-border:last-child {
+            border-bottom: none;
+        }
+        
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 5px;
+        }
+
+        .entry-title {
+            font-size: 11pt;
+            font-weight: 700;
+            color: #333;
+            margin: 0;
+        }
+
+        .entry-date {
+            font-size: 9pt;
+            font-style: italic;
+            color: #777;
+        }
+
+        .entry-subtitle {
+            font-size: 10pt;
+            font-weight: 500;
+            color: #555;
+            margin: 0 0 5px 0;
+        }
+        
+        .entry-gpa {
+            font-size: 9pt;
+            color: #666;
+            margin: 0;
+        }
+
+        .entry-description {
+            font-size: 10pt;
+            line-height: 1.5;
+            color: #444;
+            padding-left: 15px;
+            margin-top: 5px;
+            list-style-type: disc;
+        }
+
+        .entry-description li {
+            margin-bottom: 3px;
+        }
+
+        .entry-description li:last-child {
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="cv-container">
+        <header class="header">
+            <div class="name-container">
+                <h1 class="name">{{personalInfo.name}}</h1>
+                <p class="profession">{{personalInfo.profession}}</p>
+            </div>
+            
+            <div class="contact-container">
+                <ul class="contact-list">
+                    {{#if personalInfo.phone}}<li><strong>Telepon:</strong> {{personalInfo.phone}}</li>{{/if}}
+                    {{#if personalInfo.email}}<li><strong>Email:</strong> {{personalInfo.email}}</li>{{/if}}
+                    {{#if personalInfo.linkedin}}<li><strong>LinkedIn:</strong> <a href="{{personalInfo.linkedin}}" class="link" target="_blank" rel="noopener noreferrer">{{personalInfo.linkedin}}</a></li>{{/if}}
+                    {{#if personalInfo.github}}<li><strong>GitHub:</strong> <a href="{{personalInfo.github}}" class="link" target="_blank" rel="noopener noreferrer">{{personalInfo.github}}</a></li>{{/if}}
+                    {{#if personalInfo.address}}<li><strong>Alamat:</strong> {{personalInfo.address}}</li>{{/if}}
+                </ul>
+            </div>
+        </header>
+
+        <main class="main-content">
+            {{#if summary}}
+            <section class="section">
+                <h2 class="section-title">PROFIL</h2>
+                <div class="section-content">
+                    <p class="summary">{{summary}}</p>
+                </div>
+            </section>
+            {{/if}}
+
+            {{#if skills}}
+            <section class="section">
+                <h2 class="section-title">KEAHLIAN</h2>
+                <div class="section-content">
+                    <ul class="skills-list">
+                        {{!-- Asumsi skills sudah array dari API route --}}
+                        {{#each skills}}
+                        <li class="skill-item">{{this}}</li>
+                        {{/each}}
+                    </ul>
+                </div>
+            </section>
+            {{/if}}
+
+            {{#if experiences.length}} {{!-- Cukup periksa panjang array --}}
+            <section class="section">
+                <h2 class="section-title">PENGALAMAN PROFESIONAL</h2>
+                <div class="section-content">
+                    {{#each experiences}}
+                    <div class="entry{{#if @last}}{{else}} entry-with-border{{/if}}">
+                        <div class="entry-header">
+                            <h3 class="entry-title">{{this.jobTitle}}</h3>
+                            <span class="entry-date">{{this.date}}</span>
+                        </div>
+                        <p class="entry-subtitle">{{this.company}}{{#if this.location}} | {{this.location}}{{/if}}</p>
+                        {{#if this.descriptionList}} {{!-- Menggunakan descriptionList dari API --}}
+                            <ul class="entry-description">
+                                {{#each this.descriptionList}}
+                                <li style="text-align: justify;">{{this}}</li>
+                                {{/each}}
+                            </ul>
+                        {{/if}}
+                    </div>
+                    {{/each}}
+                </div>
+            </section>
+            {{/if}}
+
+            {{#if educations.length}} {{!-- Cukup periksa panjang array --}}
+            <section class="section">
+                <h2 class="section-title">PENDIDIKAN</h2>
+                <div class="section-content">
+                    {{#each educations}}
+                    <div class="entry{{#if @last}}{{else}} entry-with-border{{/if}}">
+                        <div class="entry-header">
+                            <h3 class="entry-title">{{this.degree}}</h3>
+                            <span class="entry-date">{{this.date}}</span>
+                        </div>
+                        <p class="entry-subtitle">{{this.institution}}{{#if this.location}} | {{this.location}}{{/if}}</p>
+                        {{#if this.gpa}}<p class="entry-gpa">IPK/Nilai: {{this.gpa}}</p>{{/if}}
+                    </div>
+                    {{/each}}
+                </div>
+            </section>
+            {{/if}}
+
+            {{#if projects.length}} {{!-- Cukup periksa panjang array --}}
+            <section class="section">
+                <h2 class="section-title">PROYEK</h2>
+                <div class="section-content">
+                    {{#each projects}}
+                    <div class="entry{{#if @last}}{{else}} entry-with-border{{/if}}">
+                        <div class="entry-header">
+                            <h3 class="entry-title">{{this.name}}</h3>
+                            <span class="entry-date">{{this.date}}</span>
+                        </div>
+                        {{#if this.descriptionList}} {{!-- Menggunakan descriptionList dari API --}}
+                            <ul class="entry-description">
+                                {{#each this.descriptionList}}
+                                <li style="text-align: justify;">{{this}}</li>
+                                {{/each}}
+                            </ul>
+                        {{/if}}
+                    </div>
+                    {{/each}}
+                </div>
+            </section>
+            {{/if}}
+        </main>
+    </div>
+</body>
+</html>

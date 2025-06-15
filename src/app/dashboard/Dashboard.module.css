@@ -46,12 +46,12 @@
 
 .statValueBlue {
     composes: statValue;
-    color: #2563eb; /* blue-600 */
+    color: #4f46e5; /* blue-600 */
 }
 
 .statValueGreen {
     composes: statValue;
-    color: #16a34a; /* green-600 */
+    color: #10B981; /* green-600 */
 }
 
 .statActionCard {
@@ -64,7 +64,7 @@
 }
 
 .actionButton {
-    background-color: #3b82f6; /* blue-500 */
+    background-color: #4f46e5; /* blue-500 */
     color: white;
     font-weight: 700;
     padding: 0.5rem 1rem;
@@ -75,7 +75,7 @@
 }
 
 .actionButton:hover {
-    background-color: #2563eb; /* blue-600 */
+    background-color: #4f46e5 /* blue-600 */
 }
 
 /* Job Tracker Component */
@@ -129,12 +129,12 @@
     resize: none;
 }
 .formInput:focus {
-    outline: 2px solid #3b82f6;
+    outline: 2px solid #4f46e5;
     border-color: transparent;
 }
 
 .formButton {
-    background-color: #10b981; /* emerald-500 */
+    background-color: #10B981; /* emerald-500 */
     color: white;
     font-weight: 700;
     padding: 0.75rem;
@@ -267,7 +267,7 @@
 }
 /* Tambahkan di Dashboard.module.css */
 .actionButtonEdit {
-    color: #3b82f6; /* blue-500 */
+    color: #4f46e5; /* blue-500 */
     background: none;
     border: none;
     padding: 0.5rem;

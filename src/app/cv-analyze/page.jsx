@@ -1,54 +1,91 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // Import useEffect
 import styles from './CVOptimizer.module.css';
+import { FiArrowLeft, FiUpload, FiClipboard, FiSearch, FiFileText, FiAward, FiTool, FiKey, FiCheckCircle, FiAlertCircle, FiChevronRight, FiDownload, FiLoader, FiX, FiInfo } from 'react-icons/fi';
+import { FaRegLightbulb, FaRegSmile, FaRegMeh, FaRegFrown } from 'react-icons/fa';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation'; // Import useRouter
+import { supabase } from "../../lib/supabaseClient";
 
-const CVUploadForm = () => {
-  // State yang sudah ada
+const CVOptimizer = () => {
+  const router = useRouter(); // Initialize useRouter
   const [cvFile, setCvFile] = useState(null);
   const [jobDescription, setJobDescription] = useState('');
   const [analysisResult, setAnalysisResult] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // For form submission loading
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
-  const [parsedCvData, setParsedCvData] = useState(null);
-
-  // 1. State baru untuk form tambahan
   const [companyName, setCompanyName] = useState('');
   const [jobTitle, setJobTitle] = useState('');
 
-  const handleFileChange = (e) => {
-    if (e.target.value === null) {
-      setCvFile(null);
-      return;
-    }
-    setCvFile(e.target.files[0]);
-  };
+  // New state for auth loading
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
 
-  const handleDescriptionChange = (e) => {
-    setJobDescription(e.target.value);
+  // Effect to check user session on component mount
+  useEffect(() => {
+    const checkUserSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        // If no session, redirect to login
+        router.push('/login');
+      } else {
+        // If session exists, set auth loading to false
+        setIsAuthLoading(false);
+      }
+    };
+
+    checkUserSession();
+
+    // Listen for auth state changes to handle logout/login events dynamically
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) {
+        router.push('/login'); // Redirect if user logs out from another tab/window
+      } else {
+        setIsAuthLoading(false);
+      }
+    });
+
+    return () => {
+      authListener.subscription.unsubscribe(); // Cleanup the listener
+    };
+  }, [router]); // Dependency array includes router to avoid lint warnings
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        setError('Ukuran file terlalu besar (maksimal 5MB)');
+        return;
+      }
+      if (file.type !== 'application/pdf') {
+        setError('Hanya file PDF yang diterima');
+        return;
+      }
+      setCvFile(file);
+      setError(null);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!cvFile || !jobDescription) {
-      setError('Harap unggah CV dan masukkan deskripsi pekerjaan!');
+
+    if (!cvFile || !jobDescription.trim()) {
+      setError('Harap unggah CV dan masukkan deskripsi pekerjaan');
+      toast.error('Harap unggah CV dan masukkan deskripsi pekerjaan'); // Add toast for this validation
       return;
     }
 
     setIsLoading(true);
     setError(null);
-    setAnalysisResult(null);
-    setParsedCvData(null);
 
     try {
       const formData = new FormData();
       formData.append('cvFile', cvFile);
       formData.append('jobDescription', jobDescription);
-      // 2. Tambahkan data baru ke FormData
       formData.append('companyName', companyName);
       formData.append('jobTitle', jobTitle);
-
 
       const response = await fetch('/api/analyzeCV', {
         method: 'POST',
@@ -61,14 +98,13 @@ const CVUploadForm = () => {
       }
 
       const result = await response.json();
-      
       setAnalysisResult(result.analysisResult);
-      setParsedCvData(result.parsedCvData);
-
       setActiveTab('overview');
+      toast.success('Analisis berhasil!');
     } catch (err) {
-      console.error("Terjadi error:", err);
-      setError(err.message || 'Terjadi kesalahan dalam mengirim data. Silakan coba lagi.');
+      console.error("Error:", err);
+      setError(err.message);
+      toast.error(err.message);
     } finally {
       setIsLoading(false);
     }
@@ -76,240 +112,414 @@ const CVUploadForm = () => {
 
   const handleDownloadReport = async () => {
     if (!analysisResult) {
-      setError("Data analisis tidak ditemukan untuk membuat laporan.");
+      toast.error("Data analisis tidak ditemukan untuk membuat laporan.");
       return;
     }
-  
+
     setIsLoading(true);
-    setError(null);
-  
     try {
       const response = await fetch('/api/generateReport', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ analysisResult }),
+        body: JSON.stringify({ analysisResult, companyName, jobTitle }),
       });
-  
-      if (!response.ok) {
-        let errorMessage = 'Gagal membuat Laporan PDF.';
-        try {
-          const errorData = await response.json();
-          errorMessage = errorData.details || errorData.error || errorMessage;
-        } catch (e) { /* Abaikan jika error bukan JSON */ }
-        throw new Error(errorMessage);
-      }
-  
+
+      if (!response.ok) throw new Error('Gagal membuat laporan PDF');
+
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.style.display = 'none';
       a.href = url;
-      a.download = `Laporan_Analisis_CV_SmartVitae.pdf`;
+      a.download = `Laporan_CV_${companyName || 'SmartVitae'}.pdf`;
       document.body.appendChild(a);
       a.click();
-      window.URL.revokeObjectURL(url);
       a.remove();
-  
+      toast.success('Laporan berhasil diunduh!');
     } catch (err) {
-      setError(err.message);
-      console.error("Download error:", err);
+      toast.error(err.message);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const renderProgressBar = (score) => {
-    let color;
-    if (score >= 80) color = '#4CAF50';
-    else if (score >= 60) color = '#FFC107';
-    else color = '#F44336';
-    
+  const renderScoreCircle = (score) => {
+    let color, Icon;
+    if (score >= 80) {
+      color = '#10B981';
+      Icon = FaRegSmile;
+    } else if (score >= 60) {
+      color = '#F59E0B';
+      Icon = FaRegMeh;
+    } else {
+      color = '#EF4444';
+      Icon = FaRegFrown;
+    }
+
     return (
-      <div className={styles.progressContainer}>
-        <div className={styles.progressBar} style={{ width: `${score}%`, backgroundColor: color }}></div>
-        <span className={styles.progressText}>{score}%</span>
+      <div className={styles.scoreCircleContainer}>
+        <div className={styles.scoreCircle} style={{ '--score': `${score}%`, '--color': color }}>
+          <div className={styles.scoreValue}>{score}</div>
+          <div className={styles.scoreLabel}>Skor</div>
+          <Icon className={styles.scoreEmoji} />
+        </div>
+        <p className={styles.scoreFeedback}>
+          {score >= 80 ? 'Sangat Baik! CV Anda sudah kompetitif.' :
+           score >= 60 ? 'Cukup Baik, tetapi masih bisa ditingkatkan.' :
+           'Perlu banyak perbaikan untuk bersaing.'}
+        </p>
       </div>
     );
   };
 
+  // Display a loading message while checking auth status
+  if (isAuthLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen text-lg text-gray-700">
+        <FiLoader className="animate-spin text-4xl mr-3" /> Memuat...
+      </div>
+    );
+  }
+
   return (
     <div className={styles.container}>
-      <div className={styles.heroHeader}>
-        <h2 className={styles.title}><i className={`${styles.titleIcon} fas fa-magic`}></i> Optimasi CV untuk Pekerjaan Impian Anda</h2>
-        <p className={styles.subtitle}><i className={`${styles.subtitleIcon} fas fa-bullseye`}></i> Unggah CV dan deskripsi pekerjaan untuk mendapatkan analisis mendalam</p>
-        <div className={styles.decorativeLine}></div>
-      </div>
-      
-      <form onSubmit={handleSubmit} className={styles.uploadForm}>
-        
-        {/* 3. Input field baru untuk Perusahaan dan Posisi */}
-        <div className={styles.formGroup}>
-          <label htmlFor="companyName" className={styles.formLabel}>Nama Perusahaan (Opsional):</label>
-          <input
-            id="companyName"
-            type="text"
-            value={companyName}
-            onChange={(e) => setCompanyName(e.target.value)}
-            placeholder="Contoh: PT Teknologi Maju"
-            className={styles.formInput}
-          />
-        </div>
-        <div className={styles.formGroup}>
-          <label htmlFor="jobTitle" className={styles.formLabel}>Posisi yang Dilamar (Opsional):</label>
-          <input
-            id="jobTitle"
-            type="text"
-            value={jobTitle}
-            onChange={(e) => setJobTitle(e.target.value)}
-            placeholder="Contoh: Frontend Developer"
-            className={styles.formInput}
-          />
+      <Link href="/" className={styles.backLink}>
+        <FiArrowLeft className={styles.backIcon} /> Kembali ke Home
+      </Link>
+
+      <header className={styles.header}>
+        <h1 className={styles.title}>
+          <FiSearch className={styles.titleIcon} />
+          CV Optimizer
+        </h1>
+        <p className={styles.subtitle}>
+          Optimalkan CV Anda untuk melewati sistem ATS dan menarik perhatian recruiter
+        </p>
+      </header>
+
+      <form onSubmit={handleSubmit} className={styles.form}>
+        <div className={styles.formGrid}>
+          <div className={styles.formGroup}>
+            <label className={styles.label}>
+              <FiFileText className={styles.labelIcon} />
+              Nama Perusahaan (Opsional)
+            </label>
+            <input
+              type="text"
+              value={companyName}
+              onChange={(e) => setCompanyName(e.target.value)}
+              placeholder="Contoh: Google Indonesia"
+              className={styles.input}
+            />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label className={styles.label}>
+              <FiFileText className={styles.labelIcon} />
+              Posisi yang Dilamar (Opsional)
+            </label>
+            <input
+              type="text"
+              value={jobTitle}
+              onChange={(e) => setJobTitle(e.target.value)}
+              placeholder="Contoh: Frontend Developer"
+              className={styles.input}
+            />
+          </div>
         </div>
 
         <div className={styles.formGroup}>
-          <label htmlFor="cvFile" className={styles.formLabel}><i className={`${styles.labelIcon} fas fa-file-alt`}></i> Unggah CV Anda (PDF):*</label>
-          <div className={styles.fileInputWrapper}>
-            <input type="file" id="cvFile" accept=".pdf" onChange={handleFileChange} className={styles.formInput} required style={{ display: 'none' }}/>
-            <label htmlFor="cvFile" className={styles.fileInputButton}>
-              <i className={`${styles.icon} fas fa-cloud-upload-alt`}></i>
+          <label className={styles.label}>
+            <FiUpload className={styles.labelIcon} />
+            Unggah CV Anda (PDF)*
+          </label>
+          <div className={styles.fileUpload}>
+            <input
+              type="file"
+              id="cvFile"
+              accept=".pdf"
+              onChange={handleFileChange}
+              className={styles.fileInput}
+            />
+            <label htmlFor="cvFile" className={styles.fileLabel}>
               {cvFile ? (
                 <>
                   <span className={styles.fileName}>{cvFile.name}</span>
-                  <i className={`${styles.fileClearIcon} fas fa-times`} onClick={(e) => {
-                      e.preventDefault();
+                  <button
+                    type="button"
+                    onClick={(e) => {
                       e.stopPropagation();
-                      document.getElementById('cvFile').value = null;
                       setCvFile(null);
-                    }}></i>
+                      document.getElementById('cvFile').value = '';
+                    }}
+                    className={styles.fileClear}
+                  >
+                    <FiX />
+                  </button>
                 </>
-              ) : 'Pilih File'}
+              ) : (
+                <>
+                  <FiUpload className={styles.uploadIcon} />
+                  Pilih File PDF
+                </>
+              )}
             </label>
+            <p className={styles.fileHint}>
+              <FiInfo className={styles.hintIcon} />
+              Maksimal 5MB
+            </p>
           </div>
-          <p className={styles.fileHint}><i className={`${styles.hintIcon} fas fa-info-circle`}></i> Format PDF, maksimal 5MB</p>
         </div>
 
         <div className={styles.formGroup}>
-          <label htmlFor="jobDescription" className={styles.formLabel}><i className={`${styles.labelIcon} fas fa-clipboard-list`}></i> Deskripsi Pekerjaan (Tempel di sini):*</label>
-          <div className={styles.textareaWrapper}>
-            <textarea id="jobDescription" value={jobDescription} onChange={handleDescriptionChange} placeholder="Tempelkan deskripsi pekerjaan yang ingin Anda lamar..." rows="5" className={styles.formTextarea} required/>
-            <i className={`${styles.textareaIcon} fas fa-paste`}></i>
-          </div>
+          <label className={styles.label}>
+            <FiClipboard className={styles.labelIcon} />
+            Deskripsi Pekerjaan*
+          </label>
+          <textarea
+            value={jobDescription}
+            onChange={(e) => setJobDescription(e.target.value)}
+            placeholder="Tempelkan deskripsi pekerjaan yang ingin Anda lamar..."
+            rows={6}
+            className={styles.textarea}
+            required
+          />
         </div>
 
-        <button type="submit" disabled={isLoading} className={styles.submitButton}>
+        <button
+          type="submit"
+          disabled={isLoading}
+          className={styles.submitButton}
+        >
           {isLoading ? (
-            <><i className={`${styles.spinner} fas fa-spinner`}></i> Memproses...</>
+            <>
+              <FiLoader className={styles.spinner} />
+              Menganalisis...
+            </>
           ) : (
-            <><i className={`${styles.buttonIcon} fas fa-search-plus`}></i> Analisis CV</>
+            <>
+              <FiSearch className={styles.buttonIcon} />
+              Analisis CV
+            </>
           )}
         </button>
       </form>
 
       {error && (
-        <div className={styles.errorContainer} role="alert">
-          <i className={`${styles.errorIcon} fas fa-exclamation-triangle`}></i>
+        <div className={styles.errorAlert}>
+          <FiAlertCircle className={styles.errorIcon} />
           <div>
-            <h4 className={styles.errorTitle}>Perhatian</h4>
-            <p className={styles.errorMessage}>{error}</p>
+            <h4>Terjadi Kesalahan</h4>
+            <p>{error}</p>
           </div>
         </div>
       )}
-      
+
       {analysisResult && (
-        <div className={styles.resultContainer}>
-          <div className={styles.resultHeader}>
+        <div className={styles.results}>
+          <div className={styles.resultsHeader}>
             <div>
-              <h3 className={styles.resultTitle}><i className={`${styles.resultTitleIcon} fas fa-chart-pie`}></i> Hasil Analisis CV</h3>
-              <p className={styles.resultSubtitle}><i className={`${styles.subtitleIcon} fas fa-user-tie`}></i> Berdasarkan deskripsi pekerjaan Anda</p>
-            </div>
-            <div className={styles.overallScore}>
-              <div className={styles.scoreCircle} style={{ '--score-percent': `${analysisResult.overallScore}%` }}>
-                {analysisResult.overallScore >= 80 ? <i className={`${styles.scoreEmoji} fas fa-trophy`}></i> : analysisResult.overallScore >= 60 ? <i className={`${styles.scoreEmoji} fas fa-thumbs-up`}></i> : <i className={`${styles.scoreEmoji} fas fa-lightbulb`}></i>}
-                <span className={styles.scoreValue}>{analysisResult.overallScore}</span>
-                <span className={styles.scoreLabel}>Skor</span>
-              </div>
-              <p className={styles.scoreDescription}>
-                <i className={`${styles.descriptionIcon} fas ${analysisResult.overallScore >= 80 ? "fa-smile" : analysisResult.overallScore >= 60 ? "fa-meh" : "fa-frown"}`}></i>
-                {analysisResult.overallScore >= 80 ? "Sangat Baik! CV Anda sudah cukup kuat." : 
-                 analysisResult.overallScore >= 60 ? "Cukup Baik, tetapi masih bisa ditingkatkan." : 
-                 "Perlu banyak perbaikan untuk bersaing."}
+              <h2 className={styles.resultsTitle}>
+                <FiAward className={styles.resultsIcon} />
+                Hasil Analisis
+              </h2>
+              <p className={styles.resultsSubtitle}>
+                Berdasarkan deskripsi pekerjaan dari {companyName || 'perusahaan target'}
               </p>
             </div>
+            {renderScoreCircle(analysisResult.overallScore)}
           </div>
 
           <div className={styles.tabs}>
-            <button className={`${styles.tab} ${activeTab === 'overview' ? styles.activeTab : ''}`} onClick={() => setActiveTab('overview')}><i className={`${styles.tabIcon} fas fa-binoculars`}></i> Ringkasan</button>
-            <button className={`${styles.tab} ${activeTab === 'categories' ? styles.activeTab : ''}`} onClick={() => setActiveTab('categories')}><i className={`${styles.tabIcon} fas fa-layer-group`}></i> Kategori</button>
-            <button className={`${styles.tab} ${activeTab === 'keywords' ? styles.activeTab : ''}`} onClick={() => setActiveTab('keywords')}><i className={`${styles.tabIcon} fas fa-keyboard`}></i> Kata Kunci</button>
-            <button className={`${styles.tab} ${activeTab === 'actions' ? styles.activeTab : ''}`} onClick={() => setActiveTab('actions')}><i className={`${styles.tabIcon} fas fa-tasks`}></i> Tindakan</button>
+            <button
+              className={`${styles.tab} ${activeTab === 'overview' ? styles.activeTab : ''}`}
+              onClick={() => setActiveTab('overview')}
+            >
+              <FiFileText className={styles.tabIcon} />
+              Ringkasan
+            </button>
+            <button
+              className={`${styles.tab} ${activeTab === 'categories' ? styles.activeTab : ''}`}
+              onClick={() => setActiveTab('categories')}
+            >
+              <FiTool className={styles.tabIcon} />
+              Kategori
+            </button>
+            <button
+              className={`${styles.tab} ${activeTab === 'keywords' ? styles.activeTab : ''}`}
+              onClick={() => setActiveTab('keywords')}
+            >
+              <FiKey className={styles.tabIcon} />
+              Kata Kunci
+            </button>
           </div>
 
           <div className={styles.tabContent}>
             {activeTab === 'overview' && (
-              <div className={styles.overviewContent}>
-                <section className={styles.section}><h4 className={styles.sectionTitle}><i className={`${styles.sectionIcon} fas fa-award`}></i> Kekuatan Utama</h4>
+              <div className={styles.overview}>
+                <section className={styles.section}>
+                  <h3 className={styles.sectionTitle}>
+                    <FiCheckCircle className={styles.sectionIcon} />
+                    Kekuatan Utama
+                  </h3>
                   <ul className={styles.strengthsList}>
-                    {(analysisResult.categories || []).filter(c => c.score >= 80).length > 0 ? ((analysisResult.categories || []).filter(c => c.score >= 80).map((cat, index) => (
-                      <li key={index} className={styles.strengthItem}><i className={`${styles.listIcon} fas fa-check-circle`}></i><div><strong>{cat.name}</strong><p>{cat.description}</p></div></li>
-                    ))) : <li className={styles.noItems}><i className={`${styles.listIcon} fas fa-info-circle`}></i>Tidak ada kategori dengan skor tinggi</li>}
+                    {analysisResult.strengths?.length > 0 ? (
+                      analysisResult.strengths.map((strength, i) => (
+                        <li key={i} className={styles.strengthItem}>
+                          <FiCheckCircle className={styles.strengthIcon} />
+                          <div>
+                            <strong>{strength.category}</strong>
+                            <p>{strength.description}</p>
+                          </div>
+                        </li>
+                      ))
+                    ) : (
+                      <li className={styles.noItems}>
+                        <FiInfo className={styles.noItemsIcon} />
+                        Tidak ada kategori dengan skor tinggi
+                      </li>
+                    )}
                   </ul>
                 </section>
-                <section className={styles.section}><h4 className={styles.sectionTitle}><i className={`${styles.sectionIcon} fas fa-tools`}></i> Area Perbaikan</h4>
-                  <ul className={styles.improvementList}>
-                    {(analysisResult.categories || []).filter(c => c.score < 70).length > 0 ? ((analysisResult.categories || []).filter(c => c.score < 70).map((cat, index) => (
-                      <li key={index} className={styles.improvementItem}><i className={`${styles.listIcon} fas fa-arrow-up`}></i><div><strong>{cat.name} ({cat.score}%)</strong><p>{cat.description}</p>
-                      {(cat.suggestions || []).length > 0 && (<div className={styles.quickTips}><i className={`${styles.tipIcon} fas fa-lightbulb`}></i>{cat.suggestions[0].text || cat.suggestions[0]}</div>)}</div></li>
-                    ))) : <li className={styles.noItems}><i className={`${styles.listIcon} fas fa-check-circle`}></i>Semua kategori sudah cukup baik!</li>}
+
+                <section className={styles.section}>
+                  <h3 className={styles.sectionTitle}>
+                    <FiTool className={styles.sectionIcon} />
+                    Area Perbaikan
+                  </h3>
+                  <ul className={styles.improvementsList}>
+                    {analysisResult.improvements?.length > 0 ? (
+                      analysisResult.improvements.map((improvement, i) => (
+                        <li key={i} className={styles.improvementItem}>
+                          <FiChevronRight className={styles.improvementIcon} />
+                          <div>
+                            <strong>{improvement.category} ({improvement.score}%)</strong>
+                            <p>{improvement.description}</p>
+                            {improvement.suggestion && (
+                              <div className={styles.suggestion}>
+                                <FaRegLightbulb className={styles.suggestionIcon} />
+                                {improvement.suggestion}
+                              </div>
+                            )}
+                          </div>
+                        </li>
+                      ))
+                    ) : (
+                      <li className={styles.noItems}>
+                        <FiCheckCircle className={styles.noItemsIcon} />
+                        Semua kategori sudah cukup baik!
+                      </li>
+                    )}
                   </ul>
                 </section>
               </div>
             )}
+
             {activeTab === 'categories' && (
-              <div className={styles.categoriesContent}>
-                {(analysisResult.categories || []).map((category, index) => (
-                  <article key={index} className={styles.categoryCard}><div className={styles.categoryHeader}><div><h5 className={styles.categoryName}>{category.name}</h5><p className={styles.categoryScore}>Skor: {category.score}/100</p></div>{renderProgressBar(category.score)}</div><p className={styles.categoryDescription}>{category.description}</p>
-                    {(category.suggestions || []).length > 0 && (<div className={styles.suggestions}><h6 className={styles.suggestionsTitle}><i className={`${styles.suggestionTitleIcon} fas fa-lightbulb`}></i> Rekomendasi Perbaikan:</h6><ul className={styles.suggestionsList}>
-                      {(category.suggestions || []).map((suggestion, i) => (<li key={i} className={styles.suggestionItem}><i className={`${styles.suggestionIcon} fas fa-chevron-circle-right`}></i>{suggestion.text || suggestion}</li>))}</ul></div>)}
-                  </article>
+              <div className={styles.categories}>
+                {analysisResult.categories?.map((category, i) => (
+                  <div key={i} className={styles.categoryCard}>
+                    <div className={styles.categoryHeader}>
+                      <h4 className={styles.categoryName}>{category.name}</h4>
+                      <div className={styles.categoryScore}>
+                        Skor: {category.score}/100
+                      </div>
+                    </div>
+                    <div className={styles.progressBar}>
+                      <div
+                        className={styles.progressFill}
+                        style={{
+                          width: `${category.score}%`,
+                          backgroundColor: category.score >= 80 ? '#10B981' :
+                                          category.score >= 60 ? '#F59E0B' : '#EF4444'
+                        }}
+                      ></div>
+                    </div>
+                    <p className={styles.categoryDescription}>{category.description}</p>
+                    {category.suggestions?.length > 0 && (
+                      <div className={styles.suggestions}>
+                        <h5 className={styles.suggestionsTitle}>
+                          <FaRegLightbulb className={styles.suggestionsIcon} />
+                          Rekomendasi Perbaikan
+                        </h5>
+                        <ul className={styles.suggestionsList}>
+                          {category.suggestions.map((suggestion, j) => (
+                            <li key={j} className={styles.suggestionItem}>
+                              <FiChevronRight className={styles.suggestionIcon} />
+                              {suggestion}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
                 ))}
               </div>
             )}
+
             {activeTab === 'keywords' && (
-              <div className={styles.keywordsContent}>
-                <section className={styles.section}><h4 className={styles.sectionTitle}><i className={`${styles.sectionIcon} fas fa-search`}></i> Kata Kunci yang Hilang</h4>
-                  <div className={styles.keywordsGrid}>
-                    {(analysisResult.missingKeywords || []).length > 0 ? ((analysisResult.missingKeywords || []).map((keyword, index) => (<div key={index} className={styles.keywordPill}><i className={`${styles.keywordIcon} fas fa-hashtag`}></i>{keyword}</div>))) : <div className={styles.noKeywords}><i className={`${styles.keywordIcon} fas fa-check-circle`}></i>CV Anda sudah mencakup semua kata kunci penting!</div>}
+              <div className={styles.keywords}>
+                <div className={styles.keywordsSection}>
+                  <h3 className={styles.keywordsTitle}>
+                    <FiKey className={styles.keywordsIcon} />
+                    Kata Kunci yang Hilang
+                  </h3>
+                  {analysisResult.missingKeywords?.length > 0 ? (
+                    <div className={styles.keywordsGrid}>
+                      {analysisResult.missingKeywords.map((keyword, i) => (
+                        <span key={i} className={styles.keywordBadge}>
+                          {keyword}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className={styles.noKeywords}>
+                      <FiCheckCircle className={styles.noKeywordsIcon} />
+                      CV Anda sudah mencakup semua kata kunci penting!
+                    </div>
+                  )}
+                </div>
+                <div className={styles.tipBox}>
+                  <FaRegLightbulb className={styles.tipIcon} />
+                  <div>
+                    <strong>Tip Profesional:</strong> Menambahkan kata kunci yang relevan dapat meningkatkan peluang CV Anda terdeteksi oleh sistem ATS sebesar 40-60%.
                   </div>
-                </section>
-                <div className={styles.tipBox}><i className={`${styles.tipBoxIcon} fas fa-info-circle`}></i><div><strong>Tip Profesional:</strong> Menambahkan kata kunci yang relevan dapat meningkatkan peluang CV Anda terdeteksi oleh sistem ATS sebesar 40-60%.</div></div>
-              </div>
-            )}
-            {activeTab === 'actions' && (
-              <div className={styles.actionsContent}>
-                <section className={styles.section}><h4 className={styles.sectionTitle}><i className={`${styles.sectionIcon} fas fa-rocket`}></i> Rencana Tindakan</h4>
-                  <div className={styles.actionsList}>
-                    {(analysisResult.actionItems || []).map((action, index) => (<div key={index} className={styles.actionItem}><div className={styles.actionNumber}>{index + 1}</div><div className={styles.actionText}><i className={`${styles.actionIcon} fas fa-chevron-right`}></i>{action.text || action}</div></div>))}
-                  </div>
-                </section>
-                <div className={styles.finalActionBox}>
-                  <h5 className={styles.finalActionTitle}>Simpan Hasil Analisis</h5>
-                  <p className={styles.finalActionDescription}>Unduh laporan lengkap berisi skor, analisis, dan semua saran perbaikan dalam format PDF yang rapi.</p>
-                  <button className={styles.submitButton} onClick={handleDownloadReport} disabled={isLoading}>
-                    {isLoading ? (
-                      <><i className={`${styles.spinner} fas fa-spinner`}></i> Membuat Laporan...</>
-                    ) : (
-                      <><i className={`${styles.buttonIcon} fas fa-file-pdf`}></i> Unduh Laporan Analisis</>
-                    )}
-                  </button>
                 </div>
               </div>
             )}
           </div>
+
+          <div className={styles.downloadSection}>
+            <h3 className={styles.downloadTitle}>
+              <FiDownload className={styles.downloadIcon} />
+              Simpan Hasil Analisis
+            </h3>
+            <p className={styles.downloadDescription}>
+              Unduh laporan lengkap berisi skor, analisis, dan semua saran perbaikan dalam format PDF.
+            </p>
+            <button
+              onClick={handleDownloadReport}
+              disabled={isLoading}
+              className={styles.downloadButton}
+            >
+              {isLoading ? (
+                <>
+                  <FiLoader className={styles.spinner} />
+                  Membuat Laporan...
+                </>
+              ) : (
+                <>
+                  <FiDownload className={styles.buttonIcon} />
+                  Unduh Laporan PDF
+                </>
+              )}
+            </button>
+          </div>
         </div>
       )}
-      <div className={styles.floatingDecoration}><div className={styles.decorationCircle}></div><div className={styles.decorationDots}></div></div>
+
+      <ToastContainer position="bottom-right" autoClose={5000} />
     </div>
   );
 };
 
-export default CVUploadForm;
+export default CVOptimizer;

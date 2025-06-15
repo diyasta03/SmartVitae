@@ -1,3 +1,5 @@
+/* HeroSection.module.css */
+
 .heroContainer {
   display: flex;
   align-items: center;
@@ -7,7 +9,7 @@
   border-radius: 1rem;
   margin: 2rem;
   position: relative;
-  overflow: hidden;
+  overflow: hidden; /* Penting untuk efek pseudo-element */
 }
 
 .heroContainer::before {
@@ -22,11 +24,10 @@
 }
 
 .heroContent {
-      padding-left: 2rem; /* Geser teks ke kanan */
-
+  padding-left: 2rem; /* Geser teks ke kanan untuk desktop */
   flex: 1;
   max-width: 600px;
-  z-index: 1;
+  z-index: 1; /* Pastikan konten di atas pseudo-element */
 }
 
 .breadcrumb {
@@ -47,10 +48,10 @@
   font-weight: 800;
   line-height: 1.2;
   margin-bottom: 1.5rem;
-  color: #1a202c;
+  color: #1a202c; /* Fallback color */
   background: linear-gradient(90deg, #4a6cf7 0%, #2541b2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text; /* Untuk efek teks gradien */
+  -webkit-text-fill-color: transparent; /* Untuk efek teks gradien */
 }
 
 .subheading {
@@ -65,7 +66,7 @@
   padding: 0;
   margin: 2rem 0;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, 1fr); /* 2 kolom di desktop */
   gap: 1rem;
 }
 
@@ -103,7 +104,7 @@
   text-decoration: none;
   display: inline-flex;
   align-items: center;
-  overflow: hidden;
+  overflow: hidden; /* Penting untuk efek hover */
   transition: all 0.3s ease;
 }
 
@@ -130,7 +131,14 @@
   transition: all 0.3s ease;
 }
 
-.primaryButton:hover, .secondaryButton:hover {
+/* Efek hover pada tombol */
+.primaryButton:hover .buttonHoverEffect,
+.secondaryButton:hover .buttonHoverEffect {
+  left: 0;
+}
+
+.primaryButton:hover,
+.secondaryButton:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(74, 108, 247, 0.4);
 }
@@ -142,10 +150,10 @@
 }
 
 .image {
-      display: block;
- width: 100%;
+  display: block;
+  width: 100%;
   height: auto;
-  transform: translateZ(30px);
+  transform: translateZ(30px); /* Efek 3D, bekerja dengan perspective di wrapper */
   border-radius: 1rem;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   z-index: 1;
@@ -163,39 +171,138 @@
   border-radius: 50%;
 }
 
-/* Responsive adjustments */
-@media (max-width: 1024px) {
-  .heroContainer {
-    flex-direction: column;
-    text-align: center;
-  }
-  
-  .featuresList {
-    grid-template-columns: 1fr;
-  }
-  
-  .buttonGroup {
-    justify-content: center;
-  }
-  
-  .heroImage {
-    margin-top: 3rem;
-  }
-}
-
-/* HeroSection.module.css */
-
 .imageWrapper {
-  max-width: 350px; /* batasi lebar maksimal */
-  perspective: 1000px;
+  max-width: 350px; /* Batasi lebar maksimal di desktop */
+  perspective: 1000px; /* Aktifkan efek 3D */
   transform-style: preserve-3d;
-  margin: auto;
+  margin: auto; /* Untuk memusatkan wrapper jika lebih kecil dari max-width parent */
   border-radius: 1rem;
   overflow: hidden;
   box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transisi untuk hover */
 }
 
 .imageWrapper:hover {
   transform: rotateY(8deg) rotateX(2deg) scale(1.02);
   box-shadow: 0 50px 100px rgba(0, 0, 0, 0.3);
+}
+
+/* --- Responsive adjustments --- */
+
+/* Tablet & Smaller Desktops (max-width: 1024px) */
+@media (max-width: 1024px) {
+  .heroContainer {
+    flex-direction: column; /* Konten bertumpuk secara vertikal */
+    text-align: center; /* Teks di tengah */
+    padding: 3rem 1.5rem; /* Kurangi padding */
+    margin: 1.5rem; /* Kurangi margin */
+  }
+
+  .heroContent {
+    padding-left: 0; /* Hapus padding kiri karena sekarang di tengah */
+    max-width: 100%; /* Izinkan konten mengambil lebar penuh */
+  }
+  
+  .heroTitle {
+    font-size: 2.8rem; /* Ukuran font lebih kecil */
+    margin-bottom: 1rem;
+  }
+
+  .subheading {
+    font-size: 1.1rem; /* Ukuran subheading lebih kecil */
+    margin-bottom: 1.5rem;
+  }
+
+  .featuresList {
+    grid-template-columns: 1fr; /* Fitur menjadi 1 kolom */
+    margin: 1.5rem auto; /* Atur margin dan pusat list */
+    max-width: 300px; /* Batasi lebar list di tengah */
+  }
+  
+  .buttonGroup {
+    justify-content: center; /* Tombol di tengah */
+  }
+  
+  .heroImage {
+    margin-top: 2.5rem; /* Kurangi margin atas untuk gambar */
+    max-width: 450px; /* Kontrol ukuran gambar di tablet */
+    margin-left: auto; /* Pusatkan gambar di tablet */
+    margin-right: auto;
+  }
+
+  .imageWrapper {
+    max-width: 300px; /* Batasi lebar wrapper gambar di tablet */
+    margin-left: auto; /* Pusatkan wrapper gambar */
+    margin-right: auto;
+  }
+}
+
+/* Mobile Devices (max-width: 767px) */
+@media (max-width: 767px) {
+  .heroContainer {
+    padding: 2.5rem 1rem; /* Padding lebih kecil lagi */
+    margin: 1rem; /* Margin lebih kecil lagi */
+    border-radius: 0.75rem; /* Radius border sedikit lebih kecil */
+  }
+
+  .heroTitle {
+    font-size: 2.2rem; /* Ukuran font judul jauh lebih kecil untuk mobile */
+    margin-bottom: 1rem;
+  }
+
+  .subheading {
+    font-size: 1rem; /* Ukuran subheading lebih kecil untuk mobile */
+    margin-bottom: 1.5rem;
+  }
+
+  .breadcrumb {
+    font-size: 0.8rem; /* Ukuran breadcrumb lebih kecil */
+    padding: 0.4rem 0.8rem;
+    margin-bottom: 1rem;
+  }
+
+  .featuresList {
+    gap: 0.8rem; /* Jarak antar fitur sedikit lebih kecil */
+  }
+
+  .featureItem {
+    font-size: 0.95rem; /* Ukuran teks fitur sedikit lebih kecil */
+  }
+
+  .buttonGroup {
+    flex-direction: column; /* Tombol bertumpuk vertikal */
+    gap: 0.75rem; /* Jarak antar tombol yang bertumpuk */
+    width: 100%; /* Pastikan grup tombol mengambil lebar penuh */
+  }
+
+  .primaryButton, .secondaryButton {
+    width: 100%; /* Tombol mengambil lebar penuh saat bertumpuk */
+    padding: 0.8rem 1.5rem; /* Padding tombol lebih kecil */
+    font-size: 0.95rem; /* Ukuran font tombol disesuaikan */
+  }
+
+  .heroImage {
+    margin-top: 2rem; /* Sesuaikan margin gambar untuk mobile */
+    max-width: 90%; /* Pastikan gambar tidak meluap di layar kecil */
+  }
+
+  .imageWrapper {
+    max-width: 250px; /* Batasi lebar wrapper gambar di mobile */
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15); /* Bayangan lebih ringan */
+  }
+
+  .imageWrapper:hover {
+    transform: none; /* Nonaktifkan efek 3D hover di mobile */
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15); /* Pertahankan bayangan konsisten */
+  }
+}
+
+/* Optional: Even smaller mobile (e.g., iPhone SE) for very tight spaces */
+@media (max-width: 479px) {
+  .heroTitle {
+    font-size: 1.8rem; /* Ukuran judul lebih kecil lagi */
+  }
+  .subheading {
+    font-size: 0.95rem;
+  }
 }
