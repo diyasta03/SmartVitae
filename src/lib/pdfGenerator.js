@@ -1,4 +1,5 @@
-import puppeteer from 'puppeteer'; // Langsung import dari 'puppeteer'
+import puppeteer from 'puppeteer-core'; // PERUBAHAN 1: Import dari puppeteer-core
+import chromium from '@sparticuz/chromium-min'; // PERUBAHAN 1: Import chromium untuk serverless
 import fs from 'fs/promises';
 import path from 'path';
 import handlebars from 'handlebars';
@@ -10,16 +11,20 @@ const getSafeData = (data) => {
     categories: data.categories || [],
     missingKeywords: data.missingKeywords || [],
     actionItems: data.actionItems || [],
-    // Tambahkan properti lain dari data Anda di sini dengan '|| []' atau '|| {}'
     personalInfo: data.personalInfo || {},
     summary: data.summary || '',
-    experience: data.experience || [],
-    education: data.education || [],
-    skills: data.skills || [],
+    experiences: data.experiences || [], // Diubah dari experience
+    educations: data.educations || [], // Diubah dari education
+    skills: data.skills || '',
     projects: data.projects || [],
     certification: data.certification || [],
   };
 };
+
+// Daftarkan helper kustom untuk Handlebars
+handlebars.registerHelper('split', (str, separator) => (typeof str === 'string' ? str.split(separator) : []));
+handlebars.registerHelper('trim', (str) => (typeof str === 'string' ? str.trim() : ''));
+
 
 export async function generatePdfFromTemplate(data, templateFileName) {
   const safeData = getSafeData(data);
@@ -32,9 +37,14 @@ export async function generatePdfFromTemplate(data, templateFileName) {
     const template = handlebars.compile(htmlTemplate);
     const finalHtml = template(safeData);
 
-    // Meluncurkan browser lokal dari paket puppeteer standar
-    // Konfigurasinya sangat sederhana
-    browser = await puppeteer.launch({ headless: true });
+    // PERUBAHAN 2: Gunakan konfigurasi chromium untuk meluncurkan browser
+    browser = await puppeteer.launch({
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: await chromium.executablePath(),
+      headless: chromium.headless,
+      ignoreHTTPSErrors: true,
+    });
 
     const page = await browser.newPage();
     await page.setContent(finalHtml, { waitUntil: 'networkidle0' });
@@ -46,7 +56,7 @@ export async function generatePdfFromTemplate(data, templateFileName) {
 
     return pdfBuffer;
   } catch (error) {
-    console.error("Error in PDF Generation (standard puppeteer):", error);
+    console.error("Error in PDF Generation (Vercel):", error);
     throw error;
   } finally {
     if (browser !== null) {

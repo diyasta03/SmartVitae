@@ -1,10 +1,10 @@
-import puppeteer from 'puppeteer'; // Atau 'puppeteer-core' jika Anda menggunakan Browserless/Serverless
-import handlebars from 'handlebars';
-import path from 'path';
+import puppeteer from 'puppeteer-core';
+import chromium from '@sparticuz/chromium-min';
 import fs from 'fs/promises';
+import path from 'path';
+import handlebars from 'handlebars';
 
-// --- DAFTARKAN HELPER DI SINI ---
-// Ini penting agar template HTML bisa menggunakan fungsi 'split' dan 'trim'
+// Mendaftarkan helper kustom untuk memproses data di template
 handlebars.registerHelper('split', function(str, separator) {
     if (typeof str !== 'string') {
         return [];
@@ -20,6 +20,7 @@ handlebars.registerHelper('trim', function(str) {
 });
 
 // Fungsi untuk memastikan data default ada jika beberapa field kosong
+// untuk mencegah error saat kompilasi template
 const getSafeData = (data) => {
   return {
     personalInfo: data.personalInfo || {},
@@ -45,36 +46,36 @@ export async function generatePdfFromTemplate(data, templateFileName) {
         const template = handlebars.compile(htmlTemplate);
         const finalHtml = template(safeData);
 
-        // Meluncurkan browser. Ganti bagian ini jika Anda menggunakan Browserless.io
-        // Untuk metode lokal standar:
-        browser = await puppeteer.launch({ headless: true });
-        
-        /* // Untuk metode Browserless.io (jika Anda kembali ke metode ini):
-        browser = await puppeteer.connect({
-            browserWSEndpoint: `wss://chrome.browserless.io?token=${process.env.BROWSERLESS_API_KEY}`,
+        // Menggunakan konfigurasi chromium khusus untuk serverless Vercel
+        browser = await puppeteer.launch({
+          args: chromium.args,
+          defaultViewport: chromium.defaultViewport,
+          executablePath: await chromium.executablePath(),
+          headless: chromium.headless,
+          ignoreHTTPSErrors: true,
         });
-        */
 
         const page = await browser.newPage();
         
-        // Mengatur konten halaman dan menunggu semua aset (font, gambar) selesai dimuat
+        // Mengatur konten halaman dan menunggu semua aset (font, gambar dari CDN) selesai dimuat
         await page.setContent(finalHtml, { waitUntil: 'networkidle0' });
         
-        // Membuat PDF dengan format A4
+        // Membuat PDF dengan format A4 dan memastikan background tercetak
         const pdfBuffer = await page.pdf({
             format: 'A4',
-            printBackground: true, // Penting agar warna background ikut tercetak
+            printBackground: true,
             margin: { top: '0mm', right: '0mm', bottom: '0mm', left: '0mm' }
         });
 
         return pdfBuffer;
     } catch (error) {
-        console.error("Error in PDF Generation:", error);
+        // Memberikan log error yang lebih detail di server
+        console.error("Error in PDF Generation on Vercel:", error);
         throw error; // Lempar error agar bisa ditangkap oleh API handler
     } finally {
         if (browser !== null) {
-            // Tutup koneksi browser setelah selesai
-            await browser.close(); // Gunakan browser.disconnect() jika pakai Browserless
+            // Menutup koneksi browser setelah selesai
+            await browser.close();
         }
     }
 }
