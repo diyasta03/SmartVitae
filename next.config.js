@@ -6,6 +6,11 @@ const nextConfig = {
   api: {
     bodyParser: false,
   },
+   output: 'standalone',
+  experimental: {
+    serverComponentsExternalPackages: ['@sparticuz/chromium'],
+  }
 };
 
 module.exports = nextConfig;
+
