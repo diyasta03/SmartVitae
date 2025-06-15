@@ -1,14 +1,9 @@
 {
   "functions": {
     "pages/api/generate-cv.js": {
-      "includeFiles": "node_modules/@sparticuz/chromium/**",
       "memory": 1024,
-      "maxDuration": 60 
-    }
-  },
-  "build": {
-    "env": {
-      "CHROMIUM_PATH": "/tmp/chromium"
+      "maxDuration": 30,
+      "runtime": "nodejs18.x"
     }
   }
 }
