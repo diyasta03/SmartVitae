@@ -1,16 +1,22 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
-import { NextResponse } from 'next/server'
+import { createPagesServerClient } from '@supabase/auth-helpers-nextjs';
 
-export async function GET(request) {
-  const requestUrl = new URL(request.url)
-  const code = requestUrl.searchParams.get('code')
+export default async function handler(req, res) {
+  // Ambil 'code' yang dikirim oleh Google melalui URL
+  const { code } = req.query;
 
   if (code) {
-    const supabase = createRouteHandlerClient({ cookies })
-    await supabase.auth.exchangeCodeForSession(code)
+    // Buat client Supabase di sisi server
+    const supabase = createPagesServerClient({ req, res });
+    try {
+      // Tukarkan 'code' tersebut dengan sesi login yang valid
+      await supabase.auth.exchangeCodeForSession(String(code));
+    } catch (error) {
+      console.error("Error exchanging code for session:", error);
+      // Jika ada error, arahkan ke halaman error atau halaman utama
+      return res.redirect('/login?error=Authentication failed');
+    }
   }
 
-  // URL to redirect to after sign in process completes
-  return NextResponse.redirect(requestUrl.origin)
+  // Setelah berhasil, arahkan pengguna ke halaman dashboard
+  res.redirect('/');
 }
