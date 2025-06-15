@@ -1,6 +1,6 @@
 {
   "functions": {
-    "api/generate-cv.js": {
+    "pages/api/generate-cv.js": {
       "memory": 1024,
       "maxDuration": 30
     }
