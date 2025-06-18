@@ -13,7 +13,7 @@ const Footer = () => {
         <div className={styles.contentWrapper}> {/* Added a wrapper for better structure */}
           <div className={styles.brandInfo}>
             <Link href="/" className={styles.logoLink}>
-              <img src="/logo.png" alt="SmartVitae Logo" className={styles.logoImage} />
+              <img src="/sv.png" alt="SmartVitae Logo" className={styles.logoImage} />
           
             </Link>
             <p className={styles.tagline}>Optimalkan CV Anda dengan AI.</p> {/* Optional tagline */}
