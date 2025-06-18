@@ -1,7 +1,7 @@
 /* src/app/components/Footer/Footer.module.css */
 
 .footer {
-  background-color: #1a202c; /* Warna latar belakang gelap (dark blue-gray) */
+  background-color: #000000; /* Warna latar belakang gelap (dark blue-gray) */
   color: #a0aec0; /* Warna teks default (light gray) */
   padding: 3rem 1.5rem; /* Padding atas bawah lebih besar */
   font-size: 0.95rem;
@@ -83,7 +83,7 @@
 }
 
 .linkItem:hover {
-  color: #4a6cf7; /* Warna hover (biru cerah) */
+  color: #7c3aed; /* Warna hover (biru cerah) */
 }
 
 .socialSection {
@@ -111,7 +111,7 @@
 }
 
 .socialIcon:hover {
-  background-color: #4a6cf7; /* Warna latar belakang hover */
+  background-color: #7c3aed; /* Warna latar belakang hover */
   color: #ffffff; /* Warna ikon hover */
 }
 

@@ -1,0 +1,169 @@
+/* styles/AdminDetail.module.css */
+
+.detailContainer {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 25px;
+  background-color: var(--bg-color-light, #f8f9fa);
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+.detailHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  border-bottom: 1px solid var(--border-color, #e0e0e0);
+  padding-bottom: 20px;
+}
+
+.detailHeader h1 {
+  font-size: 2em;
+  color: var(--text-color-dark, #333);
+  margin: 0;
+  flex-grow: 1;
+  text-align: center;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 10px;
+}
+
+.backButton {
+  background-color: var(--secondary-color, #6c757d);
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9em;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.backButton:hover {
+  background-color: var(--secondary-dark-color, #5a6268);
+}
+
+.editButton,
+.deleteButton {
+  padding: 10px 15px;
+  border-radius: 6px;
+  font-size: 0.9em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.editButton {
+  background-color: var(--primary-color, #007bff);
+  color: white;
+  border: none;
+}
+
+.editButton:hover {
+  background-color: var(--primary-dark-color, #0056b3);
+}
+
+.deleteButton {
+  background-color: var(--danger-color, #dc3545);
+  color: white;
+  border: none;
+}
+
+.deleteButton:hover {
+  background-color: var(--danger-dark-color, #c82333);
+}
+
+.detailContent {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 25px;
+}
+
+.detailCard {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.detailCard h3 {
+  font-size: 1.3em;
+  color: var(--primary-color, #007bff);
+  margin-bottom: 15px;
+  border-bottom: 1px dashed var(--border-color, #e0e0e0);
+  padding-bottom: 10px;
+}
+
+.detailCard p {
+  margin-bottom: 8px;
+  font-size: 1em;
+  color: var(--text-color-dark, #333);
+}
+
+.jsonBlock {
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 5px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9em;
+  white-space: pre-wrap; /* Mempertahankan spasi dan baris baru */
+  word-wrap: break-word; /* Mencegah overflow */
+  color: var(--text-color-dark, #333);
+  max-height: 400px; /* Batasi tinggi */
+  overflow-y: auto; /* Aktifkan scroll jika terlalu tinggi */
+}
+
+.errorContainer, .notFoundContainer {
+  text-align: center;
+  padding: 50px 20px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  margin: 50px auto;
+  max-width: 500px;
+  color: var(--danger-color, #dc3545);
+}
+
+.notFoundContainer h2 {
+    color: var(--secondary-color, #6c757d);
+    margin-bottom: 15px;
+}
+
+.notFoundContainer p {
+    color: var(--text-color-light, #666);
+    margin-bottom: 25px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .detailContainer {
+    margin: 15px;
+    padding: 15px;
+  }
+  .detailHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  .detailHeader h1 {
+    text-align: left;
+    font-size: 1.5em;
+  }
+  .actionButtons {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  .backButton {
+    width: 100%;
+    justify-content: center;
+  }
+}

@@ -1,78 +1,199 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './Navbar.module.css';
-import { FiMenu, FiX } from 'react-icons/fi';
+import { FiMenu, FiX, FiChevronDown, FiChevronUp, FiUser } from 'react-icons/fi';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [user, setUser] = useState(null); // null if not logged in, user object if logged in
+  const [user, setUser] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isFeaturesDropdownOpen, setIsFeaturesDropdownOpen] = useState(false);
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    const getSession = async () => {
-      // Destructure data with a default empty object to avoid errors if data is undefined
+    const checkUserAndAdminStatus = async () => {
       const { data: { session } = {} } = await supabase.auth.getSession();
-      setUser(session?.user ?? null);
-    };
-    getSession();
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
 
-    // Listen for auth state changes
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-      setUser(session?.user ?? null);
+      if (currentUser) {
+        try {
+          const { data: profile, error } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', currentUser.id)
+            .single();
+
+          if (error) throw error;
+          setIsAdmin(profile?.role === 'admin');
+        } catch (err) {
+          console.error("Error fetching user profile:", err);
+          setIsAdmin(false);
+        }
+      } else {
+        setIsAdmin(false);
+      }
+    };
+
+    checkUserAndAdminStatus();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+      if (currentUser) {
+        supabase.from('profiles').select('role').eq('id', currentUser.id).single()
+          .then(({ data: profile, error }) => {
+            if (error) console.error("Error fetching profile:", error);
+            setIsAdmin(profile?.role === 'admin');
+          })
+          .catch(err => console.error("Error fetching profile:", err));
+      } else {
+        setIsAdmin(false);
+      }
     });
 
-    // Cleanup the subscription
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
-  }, []); // Empty dependency array means this runs once on mount
+    return () => authListener?.subscription?.unsubscribe();
+  }, []);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    setIsOpen(false); // Close menu after logout
-    router.push('/login'); // Redirect to login page after logout
+    closeAllMenus();
+    router.push('/login');
   };
 
-  const closeMenu = () => setIsOpen(false);
+  const closeAllMenus = () => {
+    setIsOpen(false);
+    setIsFeaturesDropdownOpen(false);
+    setIsUserDropdownOpen(false);
+  };
+
+  const toggleFeaturesDropdown = () => {
+    setIsFeaturesDropdownOpen(prev => !prev);
+    setIsUserDropdownOpen(false);
+  };
+
+  const toggleUserDropdown = () => {
+    setIsUserDropdownOpen(prev => !prev);
+    setIsFeaturesDropdownOpen(false);
+  };
+
+  const navItemsAdmin = [
+    { path: '/about', label: 'About' },
+    { path: '/admin', label: 'Admin Dashboard' },
+  ];
+
+  const navItemsUser = [
+    { path: '/about', label: 'About' },
+    { path: '/dashboard', label: 'Dashboard' },
+  ];
+
+  const featuresDropdownItems = [
+    { path: '/cv-analyze', label: 'Analisis CV' },
+    { path: '/cv-maker', label: 'Buat CV' },
+    { path: '/job-tracker', label: 'Job Tracker' },
+  ];
+
+  const userDropdownItems = [
+    { path: '/profile', label: 'Profile' },
+    { path: '/settings', label: 'Settings' },
+  ];
+
+  const getUserName = () => {
+    if (!user) return '';
+    return user.user_metadata?.full_name || user.email?.split('@')[0] || 'Account';
+  };
 
   return (
     <header className={styles.header}>
       <div className={styles.logoContainer}>
-        <Link href="/">
-          <img src="/logo.png" alt="SmartVitae Logo" className={styles.logo} />
+        <Link href="/" onClick={closeAllMenus}>
+          <img src="/sv.png" alt="Logo" className={styles.logo} />
         </Link>
       </div>
 
       <nav className={`${styles.navContainer} ${isOpen ? styles.active : ''}`}>
-        <div className={styles.navLinks}>
-          <Link href="/about" className={styles.navLink} onClick={closeMenu}>About Us</Link>
+        <button className={styles.closeMenuButton} onClick={closeAllMenus}>
+          <FiX />
+        </button>
 
-          {/* Kondisi untuk menampilkan Dashboard */}
-          {user && ( // Hanya render link ini jika 'user' tidak null (artinya sudah login)
-            <Link href="/dashboard" className={styles.navLink} onClick={closeMenu}>Dashboard</Link>
+        <div className={styles.navLinks}>
+          {user ? (
+            isAdmin ? (
+              navItemsAdmin.map(item => (
+                <Link href={item.path} key={item.path} className={styles.navLink} onClick={closeAllMenus}>
+                  {item.label}
+                </Link>
+              ))
+            ) : (
+              <>
+                {navItemsUser.map(item => (
+                  <Link href={item.path} key={item.path} className={styles.navLink} onClick={closeAllMenus}>
+                    {item.label}
+                  </Link>
+                ))}
+                <div className={styles.dropdownContainer}>
+                  <button
+                    className={styles.dropdownToggle}
+                    onClick={toggleFeaturesDropdown}
+                  >
+                    Fitur {isFeaturesDropdownOpen ? <FiChevronUp /> : <FiChevronDown />}
+                  </button>
+                  {isFeaturesDropdownOpen && (
+                    <div className={styles.dropdownMenu}>
+                      {featuresDropdownItems.map(item => (
+                        <Link href={item.path} key={item.path} className={styles.dropdownItem} onClick={closeAllMenus}>
+                          {item.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </>
+            )
+          ) : (
+            <Link href="/about" className={styles.navLink} onClick={closeAllMenus}>About</Link>
           )}
         </div>
 
         <div className={styles.authButtons}>
           {user ? (
-            <>
-              <Link href="/profile" className={styles.welcomeText} onClick={closeMenu}>
-                Halo, {user.user_metadata?.full_name || user.email}
-              </Link>
-              <button onClick={handleLogout} className={styles.signup}>Logout</button>
-            </>
+            <div className={styles.userDropdownContainer}>
+              <button
+                className={styles.userButton}
+                onClick={toggleUserDropdown}
+              >
+                <FiUser className={styles.userIcon} />
+                <span className={styles.userName}>{getUserName()}</span>
+                {isUserDropdownOpen ? <FiChevronUp /> : <FiChevronDown />}
+              </button>
+              {isUserDropdownOpen && (
+                <div className={styles.userDropdownMenu}>
+                  {userDropdownItems.map(item => (
+                    <Link href={item.path} key={item.path} className={styles.dropdownItem} onClick={closeAllMenus}>
+                      {item.label}
+                    </Link>
+                  ))}
+                  <button onClick={handleLogout} className={styles.logoutButton}>
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
           ) : (
             <>
-              <Link href="/login" className={styles.login} onClick={closeMenu}>Login</Link>
-              <Link href="/register" className={styles.signup} onClick={closeMenu}>Sign Up</Link>
+              <Link href="/login" className={styles.loginButton} onClick={closeAllMenus}>Login</Link>
+              <Link href="/register" className={styles.signupButton} onClick={closeAllMenus}>Sign Up</Link>
             </>
           )}
         </div>
       </nav>
+
+      {isOpen && <div className={styles.backdrop} onClick={closeAllMenus}></div>}
 
       <button className={styles.menuToggle} onClick={() => setIsOpen(!isOpen)}>
         {isOpen ? <FiX /> : <FiMenu />}

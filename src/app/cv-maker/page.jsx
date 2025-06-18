@@ -476,9 +476,10 @@ export default function CvMaker() {
       {/* Left Panel - Form Section */}
       <div className={styles.formSection}>
         <div className={styles.formHeader}>
-          <Link href="/" className={styles.backLink}>
-            <FiArrowLeft className={styles.backIcon} /> Kembali ke Home
-          </Link>
+        
+          <button onClick={() => router.back()} className={styles.backLink}>
+      <FiArrowLeft className={styles.backIcon} /> Kembali
+    </button>
           <h1>Buat CV Profesional</h1>
           <p className={styles.subtitle}>Isi formulir berikut untuk membuat CV Anda</p>
         </div>

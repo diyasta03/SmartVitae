@@ -1,14 +1,15 @@
 "use client";
 import { motion } from "framer-motion";
-import { ArrowRight, BadgeCheck, Zap } from "lucide-react";
-import styles from "./CTASection.module.css";
+import { ArrowRight, BadgeCheck, Zap } from "lucide-react"; // Icons dari Lucide React
+import styles from "./CTASection.module.css"; // Pastikan path CSS benar
 
 const CTASection = () => {
+  // Manfaat disesuaikan untuk SmartVitae dan diterjemahkan
   const benefits = [
-    "24-hour turnaround time",
-    "ATS-optimized templates",
-    "Career coaching included",
-    "Unlimited revisions"
+    "Analisis CV Akurat & Cepat", // Accurate & Fast CV Analysis (menggantikan 24-hour turnaround)
+    "Optimasi CV Sesuai Standar ATS", // ATS-Optimized CV Optimization
+    "Dibantu Teknologi AI Terkini", // Assisted by Latest AI Technology
+    "Pelacakan Lamaran Kerja Terintegrasi" // Integrated Job Application Tracking
   ];
 
   const containerVariants = {
@@ -35,6 +36,7 @@ const CTASection = () => {
 
   return (
     <section className={styles.ctaContainer}>
+      {/* Background visual (tetap sama) */}
       <div className={styles.ctaBackground}></div>
       
       <motion.div
@@ -45,6 +47,7 @@ const CTASection = () => {
         className={styles.ctaContent}
       >
         <div className={styles.ctaText}>
+          {/* Badge Penawaran Terbatas */}
           <motion.div 
             initial={{ scale: 0.9 }}
             whileInView={{ scale: 1 }}
@@ -53,9 +56,10 @@ const CTASection = () => {
             className={styles.ctaBadge}
           >
             <Zap className={styles.zapIcon} />
-            <span>Limited Time Offer</span>
+            <span>Penawaran Terbatas</span> {/* Diterjemahkan */}
           </motion.div>
 
+          {/* Judul CTA */}
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -63,9 +67,10 @@ const CTASection = () => {
             viewport={{ once: true }}
             className={styles.ctaTitle}
           >
-            Ready to Transform Your Career?
+            Siap Mengubah Karier Anda?
           </motion.h2>
 
+          {/* Subtitle CTA */}
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -73,9 +78,10 @@ const CTASection = () => {
             viewport={{ once: true }}
             className={styles.ctaSubtitle}
           >
-            Join thousands of professionals who landed their dream jobs after our resume makeover
+            Bergabunglah dengan ribuan profesional yang meraih pekerjaan impian setelah optimasi CV kami.
           </motion.p>
 
+          {/* Daftar Manfaat */}
           <motion.ul 
             className={styles.benefitsList}
             variants={containerVariants}
@@ -96,6 +102,7 @@ const CTASection = () => {
           </motion.ul>
         </div>
 
+        {/* Tombol CTA */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
@@ -103,23 +110,25 @@ const CTASection = () => {
           viewport={{ once: true }}
           className={styles.ctaButtons}
         >
+          {/* Tombol Utama: Mulai Analisis CV */}
           <motion.a
-            href="/pricing"
+            href="/cv-analyze" // Mengarahkan ke halaman analisis CV Anda
             className={styles.primaryButton}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            Get Started Now
+            Mulai Sekarang
             <ArrowRight className={styles.buttonIcon} />
           </motion.a>
           
+          {/* Tombol Sekunder: Pelajari Lebih Lanjut/Demo */}
           <motion.a
-            href="/demo"
+            href="/about" // Mengarahkan ke halaman "About Us" atau halaman yang lebih relevan untuk demo/info
             className={styles.secondaryButton}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            See Live Demo
+            Pelajari Lebih Lanjut
           </motion.a>
         </motion.div>
       </motion.div>

@@ -23,7 +23,7 @@ body, html {
 }
 
 .gradient_button {
-  background: radial-gradient(circle at 0 100%, blue 70%, white);
+  background: radial-gradient(circle at 0 100%, #4f46e5 70%, #7c3aed);
   background-size: var(--gradient-size, 100%);
   background-position: center;
   background-repeat: no-repeat;

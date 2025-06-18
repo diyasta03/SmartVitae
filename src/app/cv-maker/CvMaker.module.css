@@ -236,6 +236,8 @@ textarea.formControl {
 
 /* Back Link */
 .backLink {
+    all: unset; /* reset semua gaya default tombol */
+
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;

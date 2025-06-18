@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { supabase } from '../../../lib/supabaseClient';
 import styles from '../../cv-analyze/CVOptimizer.module.css'; // Ensure this path is correct relative to this file
 import Navbar from '../../components/Navbar/Navbar'; // Ensure this path is correct relative to this file
+import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner'; // Sesuaikan path
 
 // Import icons from react-icons
 import {
@@ -188,7 +189,7 @@ const HistoryDetailPage = () => {
         return (
             <div className="flex justify-center items-center min-h-screen">
                 <FiLoader className="animate-spin text-4xl text-blue-500" />
-                <span className="ml-3 text-lg">Memuat Detail Laporan...</span>
+             <LoadingSpinner message="Memuat" /> 
             </div>
         );
     }
@@ -209,8 +210,8 @@ const HistoryDetailPage = () => {
         <div className={styles.container}>
             {/* Navbar could be here, or in your main layout */}
             {/* <Navbar /> */}
-<Link href="/dashboard" className={styles.backLink}>
-            <FiArrowLeft className={styles.backIcon} /> Kembali ke Dashboard
+<Link href="/history" className={styles.backLink}>
+            <FiArrowLeft className={styles.backIcon} /> Kembali
           </Link>
             <header className={styles.header}>
               

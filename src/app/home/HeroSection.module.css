@@ -34,7 +34,7 @@
   display: inline-block;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #4a6cf7;
+  color: #4f46e5;
   background: rgba(74, 108, 247, 0.1);
   padding: 0.5rem 1rem;
   border-radius: 2rem;
@@ -49,7 +49,7 @@
   line-height: 1.2;
   margin-bottom: 1.5rem;
   color: #1a202c; /* Fallback color */
-  background: linear-gradient(90deg, #4a6cf7 0%, #2541b2 100%);
+  background: linear-gradient(90deg, #4f46e5 0%, #7c3aed 100%);
   -webkit-background-clip: text; /* Untuk efek teks gradien */
   -webkit-text-fill-color: transparent; /* Untuk efek teks gradien */
 }
@@ -109,15 +109,15 @@
 }
 
 .primaryButton {
-  background: linear-gradient(135deg, #4a6cf7 0%, #2541b2 100%);
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
   color: white;
   box-shadow: 0 4px 15px rgba(74, 108, 247, 0.3);
 }
 
 .secondaryButton {
   background: white;
-  color: #4a6cf7;
-  border: 2px solid #4a6cf7;
+  color: #4f46e5;
+  border: 2px solid #4f46e5;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 

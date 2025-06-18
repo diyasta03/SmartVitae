@@ -1,0 +1,27 @@
+{
+  "id": "gen-1750222978-xnSS3QtRstyDemUmKBEF",
+  "provider": "Chutes",
+  "model": "meta-llama/llama-4-maverick:free",
+  "object": "chat.completion",
+  "created": 1750222978,
+  "choices": [
+    {
+      "logprobs": null,
+      "finish_reason": "stop",
+      "native_finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "{\n  \"personalInfo\": {\n    \"name\": \"Agung Nugraha Diyasta\",\n    \"email\": \"agungndgames@gmail.com\",\n    \"phone\": \"213213\",\n    \"location\": \"JL Ceger Raya No 99. Sahid Mansion Blok B11\"\n  },\n  \"summary\": \"Saya adalah seorang Frontend Developer berpengalaman dengan latar belakang pendidikan S1 Sistem Informasi dari Universitas Mercu Buana. Memiliki keahlian dalam JavaScript dan HTML/CSS, saya telah mengembangkan berbagai proyek, termasuk Librigo-Books. Dengan pengalaman sebagai Fullstack Developer di Winnicode, saya siap untuk mengembangkan kemampuan dan mencapai tujuan karier sebagai pengembang front-end yang handal. Saya berkomitmen untuk terus meningkatkan keterampilan dan memberikan kontribusi pada proyek-proyek inovatif.\",\n  \"experience\": ",
+        "refusal": null,
+        "reasoning": null
+      }
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 641,
+    "completion_tokens": 163,
+    "total_tokens": 804,
+    "prompt_tokens_details": null
+  }
+}

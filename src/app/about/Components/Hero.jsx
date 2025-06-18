@@ -31,11 +31,12 @@ const Hero = () => {
   };
 
   const stats = [
-    { value: "10+", label: "Years Experience" },
-    { value: "200+", label: "Projects Completed" },
-    { value: "50+", label: "Satisfied Clients" },
-    { value: "100%", label: "Dedication" }
-  ];
+  { value: "5+", label: "Tahun Pengalaman" },
+  { value: "50+", label: "Proyek Diselesaikan" },
+  { value: "50+", label: "Klien" },
+  { value: "100%", label: "Dedikasi" }
+];
+
 
   return (
     <motion.section 
@@ -58,7 +59,7 @@ const Hero = () => {
             variants={itemVariants}
           >
           <TrueFocus 
-sentence="ABOUT OUR"
+sentence="ABOUT US  "
 manualMode={false}
 blurAmount={5}
 borderColor="red"
@@ -67,20 +68,14 @@ pauseBetweenAnimations={1}
 
 />
             
-            <motion.h1 
-              className={styles.heroTitle}
-              variants={itemVariants}
-            >
-              Crafting Digital <span>Excellence</span> Since 2022
-            </motion.h1>
-            
-            <motion.p 
-              className={styles.heroDescription}
-              variants={itemVariants}
-            >
-              We are a passionate team of designers, developers, and strategists dedicated to creating 
-              impactful digital experiences that drive results for our clients worldwide.
-            </motion.p>
+         <motion.h1 className={styles.heroTitle} variants={itemVariants}>
+  Smart Tools for <span>Career Growth</span>
+</motion.h1>
+
+<motion.p className={styles.heroDescription} variants={itemVariants}>
+  Dari pembuatan CV hingga pelacakan lamaran, kami bantu Anda menonjol di pasar kerja digital yang kompetitif.
+</motion.p>
+
             
             <motion.div variants={itemVariants}>
               

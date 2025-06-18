@@ -1,0 +1,232 @@
+/* src/app/styles/AdminList.module.css */
+
+.listPageContainer {
+  max-width: 1200px;
+  margin: 30px auto;
+  padding: 20px;
+  background-color: var(--bg-color-light, #f8f9fa);
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+.listHeader {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.listHeader h1 {
+  font-size: 2.5em;
+  color: var(--text-color-dark, #333);
+  margin-bottom: 10px;
+}
+
+.listHeader p {
+  font-size: 1.1em;
+  color: var(--text-color-light, #666);
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.searchContainer {
+  position: relative;
+  flex-grow: 1;
+  min-width: 250px;
+  max-width: 400px;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 10px 10px 10px 40px;
+  border: 1px solid var(--border-color, #dee2e6);
+  border-radius: 6px;
+  font-size: 1em;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.searchInput:focus {
+  border-color: var(--primary-color, #007bff);
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-color-light, #666);
+  font-size: 1.2em;
+}
+
+.addButton {
+  background-color: var(--accent-color, #28a745);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.addButton:hover {
+  background-color: var(--accent-dark-color, #218838);
+}
+
+.tableContainer {
+  overflow-x: auto;
+  background-color: var(--white, #ffffff);
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.dataTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.dataTable th,
+.dataTable td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color, #dee2e6);
+}
+
+.dataTable th {
+  background-color: var(--bg-color-dark, #e9ecef);
+  color: var(--text-color-dark, #333);
+  font-weight: 600;
+  cursor: pointer; /* Menandakan header bisa diurutkan */
+  position: relative;
+}
+
+.dataTable th:hover {
+  background-color: var(--border-color, #dcdfe3);
+}
+
+.dataTable th svg { /* Gaya untuk ikon sorting */
+    margin-left: 5px;
+    font-size: 0.9em;
+    vertical-align: middle;
+}
+
+
+.dataTable tbody tr:hover {
+  background-color: var(--bg-color-light, #f0f2f5);
+}
+
+.emptyState {
+  text-align: center;
+  padding: 50px 20px;
+  color: var(--text-color-light, #666);
+  font-size: 1.1em;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 8px;
+  white-space: nowrap; /* Mencegah tombol wrap */
+}
+
+.detailButton,
+.deleteButton {
+  padding: 8px 12px;
+  border-radius: 5px;
+  font-size: 0.9em;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  text-decoration: none; /* Untuk Link */
+}
+
+.detailButton {
+  background-color: var(--primary-color, #007bff);
+  color: white;
+  border: none;
+}
+
+.detailButton:hover {
+  background-color: var(--primary-dark-color, #0056b3);
+}
+
+.deleteButton {
+  background-color: var(--danger-color, #dc3545);
+  color: white;
+  border: none;
+}
+
+.deleteButton:hover {
+  background-color: var(--danger-dark-color, #c82333);
+}
+
+.errorContainer {
+    text-align: center;
+    padding: 50px 20px;
+    color: var(--danger-color, #dc3545);
+    background-color: var(--white);
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    margin: 50px auto;
+    max-width: 500px;
+}
+
+.retryButton {
+    background-color: var(--primary-color, #007bff);
+    color: var(--white);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+
+.retryButton:hover {
+    background-color: var(--primary-dark-color, #0056b3);
+}
+
+
+/* Responsive */
+@media (max-width: 768px) {
+  .listPageContainer {
+    margin: 15px;
+    padding: 15px;
+  }
+  .listHeader h1 {
+    font-size: 2em;
+  }
+  .listHeader p {
+    font-size: 0.9em;
+  }
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .searchContainer {
+    max-width: 100%;
+  }
+  .dataTable th, .dataTable td {
+    padding: 10px;
+    font-size: 0.85em;
+  }
+  .actionButtons {
+    flex-direction: column;
+    gap: 5px;
+    align-items: flex-start;
+  }
+  .detailButton, .deleteButton {
+    width: 100%;
+    justify-content: center;
+  }
+}

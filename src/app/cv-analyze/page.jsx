@@ -189,10 +189,10 @@ const CVOptimizer = () => {
       <header className={styles.header}>
         <h1 className={styles.title}>
           <FiSearch className={styles.titleIcon} />
-          CV Optimizer
+          Penganalisis CV
         </h1>
         <p className={styles.subtitle}>
-          Optimalkan CV Anda untuk melewati sistem ATS dan menarik perhatian recruiter
+"Tingkatkan peluang diterima dengan analisis CV cerdas yang mengidentifikasi kecocokan deskprisi Pekerajaan dan mengoptimalkan kata kunci untuk ATS."
         </p>
       </header>
 
