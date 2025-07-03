@@ -223,7 +223,7 @@ const CVOptimizer = () => {
               type="text"
               value={jobTitle}
               onChange={(e) => setJobTitle(e.target.value)}
-              placeholder="Contoh: Frontend Developer"
+              placeholder="Contoh: Frontend Developer/UI UX Designer"
               className={styles.input}
             />
           </div>
