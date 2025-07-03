@@ -4,7 +4,7 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const fs = require('fs'); // Node.js File System module untuk membaca file
 const pdf = require('pdf-parse'); // Untuk mengekstrak teks dari PDF
-const mammoth = require('mammoth'); // Untuk mengekstrak teks dari DOCX
+const mammoth = require('mammoth'); // Untuk mengekstrak teks dari DOCX 
 
 // Ambil GEMINI_API_KEY dari environment variables.
 // Next.js secara otomatis memuatnya dari file .env di root proyek.

@@ -1,105 +1,120 @@
 // pages/api/check-ats.js
-
-import formidable from 'formidable'; // Pastikan Anda sudah menginstal: npm install formidable
+import multer from 'multer';
 import fs from 'fs';
 import path from 'path';
+// Pastikan path ini benar untuk file cvProcessor Anda
+import { processCvWithAI } from '@/lib/cvProcessor'; 
 
-// Ini sangat penting untuk API routes yang menerima file.
-// Memberi tahu Next.js untuk tidak mem-parsing body request secara default,
-// sehingga kita bisa menanganinya sendiri dengan 'formidable'.
-export const config = {
-  api: {
-    bodyParser: false,
-  },
+// --- HAPUS BAGIAN INI ---
+// const uploadDir = path.join(process.cwd(), 'uploads');
+// if (!fs.existsSync(uploadDir)) {
+//     fs.mkdirSync(uploadDir);
+// }
+// --- HAPUS BAGIAN INI ---
+
+// Konfigurasi Multer
+const upload = multer({
+    storage: multer.diskStorage({
+        destination: (req, file, cb) => {
+            // --- KRUSIAL: Ubah destinasi ke /tmp ---
+            // `/tmp` adalah satu-satunya direktori yang bisa ditulis di Vercel/Lambda
+            cb(null, '/tmp'); 
+        },
+        filename: (req, file, cb) => {
+            // Pastikan nama file unik untuk menghindari tabrakan jika ada beberapa invokasi
+            cb(null, Date.now() + '-' + Math.random().toString(36).substring(2, 8) + '-' + file.originalname);
+        },
+    }),
+    limits: { fileSize: 10 * 1024 * 1024 }, // Batasan ukuran file 10MB
+    fileFilter: (req, file, cb) => {
+        const allowedMimes = [
+            'application/pdf',
+            'application/msword', // .doc
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document' // .docx
+        ];
+        if (allowedMimes.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error('Jenis file tidak didukung. Mohon unggah PDF, DOC, atau DOCX.'), false);
+        }
+    }
+});
+
+// Helper function untuk membungkus Multer dalam Promise
+const runMiddleware = (req, res, fn) => {
+    return new Promise((resolve, reject) => {
+        fn(req, res, (result) => {
+            if (result instanceof Error) {
+                return reject(result);
+            }
+            return resolve(result);
+        });
+    });
 };
 
+// Main API handler
 export default async function handler(req, res) {
-  // Pastikan request method adalah POST
-  if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method Not Allowed' });
-  }
-
-  // Inisialisasi formidable untuk mengurai form data
-  const form = formidable({});
-
-  // --- KRUSIAL: Atur direktori unggahan ke /tmp ---
-  // Lingkungan serverless seperti Vercel hanya mengizinkan penulisan di /tmp
-  form.uploadDir = '/tmp'; 
-
-  // Anda bisa membuat sub-direktori unik di dalam /tmp jika perlu
-  // const uniqueUploadDir = path.join('/tmp', `uploads-${Date.now()}`);
-  // if (!fs.existsSync(uniqueUploadDir)) {
-  //   fs.mkdirSync(uniqueUploadDir);
-  // }
-  // form.uploadDir = uniqueUploadDir;
-  // --- Akhir dari bagian krusial ---
-
-  // Proses form data (file dan fields lainnya)
-  form.parse(req, async (err, fields, files) => {
-    if (err) {
-      console.error('Error parsing form data:', err);
-      return res.status(500).json({ error: 'Terjadi kesalahan saat mengurai data formulir.' });
+    if (req.method !== 'POST') {
+        return res.status(405).json({ message: 'Metode tidak diizinkan. Hanya POST yang didukung.' });
     }
 
-    // Ambil file CV dari objek 'files'
-    // formidable versi 3.x mengembalikan array untuk files
-    const cvFile = files.cvFile; // Asumsikan nama field di FormData adalah 'cvFile'
-
-    if (!cvFile || !cvFile[0]) {
-      return res.status(400).json({ error: 'File CV tidak ditemukan dalam unggahan.' });
-    }
-
-    const uploadedFilePath = cvFile[0].filepath; // Path file sementara di /tmp
-    const originalFilename = cvFile[0].originalFilename;
-    const fileMimeType = cvFile[0].mimetype;
-
-    console.log(`File diunggah sementara ke: ${uploadedFilePath}`);
-    console.log(`Nama asli file: ${originalFilename}`);
-    console.log(`Tipe MIME file: ${fileMimeType}`);
+    let filePath = null; // Deklarasi di luar try agar bisa diakses di finally
 
     try {
-      // --- Mulai Pemrosesan File ---
+        await runMiddleware(req, res, upload.single('cvFile'));
 
-      // Baca konten file dari path sementara di /tmp
-      const fileBuffer = fs.readFileSync(uploadedFilePath);
-      
-      // Di sini Anda akan mengimplementasikan logika utama ATS Checker Anda.
-      // Contoh: Kirim fileBuffer (atau teks yang diekstrak dari PDF/DOCX) ke LLM
-      // untuk analisis. Jika Anda mengirim file PDF, pastikan LLM API Anda mendukungnya.
-      // Atau, gunakan library untuk mengekstrak teks dari PDF di sini jika LLM hanya butuh teks.
+        if (!req.file) {
+            return res.status(400).json({ message: 'Tidak ada file CV yang diunggah.' });
+        }
 
-      // Contoh dummy hasil analisis ATS:
-      const atsResults = {
-        score: Math.floor(Math.random() * 100), // Skor acak untuk contoh
-        feedback: [
-          "Pastikan semua bagian CV Anda jelas dan mudah dibaca oleh mesin.",
-          "Gunakan kata kunci yang relevan dari deskripsi pekerjaan.",
-          "Pertimbangkan untuk menyertakan ringkasan profil yang kuat.",
-          "Cek konsistensi format dan font."
-        ],
-        // Anda bisa menambahkan detail lain dari analisis LLM di sini
-      };
+        filePath = req.file.path; // Dapatkan path file setelah Multer selesai
+        const fileMimeType = req.file.mimetype;
 
-      // --- Akhir Pemrosesan File ---
+        console.log(`Mulai memproses CV dari ${filePath} (${fileMimeType})`);
+        
+        // Panggil fungsi proses dari cvProcessor Anda
+        // Pastikan processCvWithAI mengambil path file dan mime type
+        const atsResults = await processCvWithAI(filePath, fileMimeType);
+        
+        console.log(`CV berhasil diproses.`);
 
-      // --- KRUSIAL: Hapus file sementara dari /tmp setelah diproses ---
-      // Ini adalah praktik terbaik meskipun /tmp akan dibersihkan
-      fs.unlinkSync(uploadedFilePath); 
-      console.log(`File sementara ${uploadedFilePath} berhasil dihapus.`);
+        res.status(200).json({
+            message: 'CV berhasil diproses untuk pengecekan ATS',
+            results: atsResults,
+        });
 
-      // Kirim hasil analisis kembali ke klien
-      res.status(200).json({ success: true, results: atsResults });
+    } catch (error) {
+        console.error('Error saat memproses CV di API Route:', error);
 
-    } catch (processError) {
-      console.error('Error during file processing or ATS analysis:', processError);
+        let errorMessage = 'Terjadi kesalahan saat memproses CV.';
+        if (error.message.includes('Jenis file tidak didukung')) {
+            errorMessage = error.message;
+        } else if (error.message.includes('File too large')) {
+            errorMessage = 'Ukuran file terlalu besar. Maksimal 10MB.';
+        } else {
+            // Jika error datang dari processCvWithAI, mungkin sudah ada pesan yang lebih spesifik
+            errorMessage = error.message; 
+        }
 
-      // Pastikan file sementara dihapus meskipun ada error
-      if (fs.existsSync(uploadedFilePath)) {
-          fs.unlinkSync(uploadedFilePath);
-          console.log(`File sementara ${uploadedFilePath} dihapus setelah error.`);
-      }
-      
-      return res.status(500).json({ error: processError.message || 'Terjadi kesalahan internal saat memproses CV Anda.' });
+        res.status(500).json({
+            message: 'Terjadi kesalahan pada server.',
+            error: errorMessage
+        });
+    } finally {
+        // Hapus file sementara dari /tmp
+        // Pastikan filePath terdefinisi dan file ada sebelum dihapus
+        if (filePath && fs.existsSync(filePath)) {
+            fs.unlink(filePath, (err) => {
+                if (err) console.error('Gagal menghapus file sementara:', err);
+                else console.log(`File sementara dihapus: ${filePath}`);
+            });
+        }
     }
-  });
 }
+
+// Penting: Nonaktifkan body parser default Next.js untuk rute ini
+export const config = {
+    api: {
+        bodyParser: false,
+    },
+};
