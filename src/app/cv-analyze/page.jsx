@@ -324,7 +324,7 @@ const CVOptimizer = () => {
           />
           <p className={styles.textareaHint}>
             <FiInfo className={styles.hintIcon} />
-            Salin seluruh teks deskripsi pekerjaan termasuk persyaratan dan tanggung jawab (Semakin Lengkap Semakin bagus Hasil Analisanya)
+            Salin seluruh teks deskripsi pekerjaan termasuk persyaratan dan tanggung jawab (Semakin Lengkap semakin bagus Hasil Analisanya)
           </p>
         </div>
 
