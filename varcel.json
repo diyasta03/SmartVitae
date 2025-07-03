@@ -1,9 +1,0 @@
-{
-  "functions": {
-    "api/generateReport": {
-      "memory": 3008,
-      "maxDuration": 30,
-      "includeFiles": ["src/lib/templates/**"]
-    }
-  }
-}
