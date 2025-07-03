@@ -34,7 +34,7 @@ const easeInOutCubic = (x) =>
 
 const ProfileCardComponent = ({
   avatarUrl = "/images/default-avatar.png", // Ganti dengan placeholder default yang sesuai
-  iconUrl = "/icon.png", // Tidak ada placeholder URL default, set kosong
+  iconUrl = "/icon2.svg", // Tidak ada placeholder URL default, set kosong
   grainUrl = "", // Tidak ada placeholder URL default, set kosong
   behindGradient,
   innerGradient,
