@@ -126,7 +126,7 @@ const VerticalSidebar = () => {
          <div className={styles.brand}>
           {isExpanded ? (
            <Link href="/">
-          <img src="/logo.png" alt="SmartVitae Logo" className={styles.logo} />
+          <img src="/sv.png" alt="SmartVitae Logo" className={styles.logo} />
         </Link>
           ) : (
              <Link href="/">
@@ -163,7 +163,7 @@ const VerticalSidebar = () => {
         <div className={styles.brand}>
           {isExpanded ? (
            <Link href="/" onClick={() => setIsMobileOpen(false)}>
-          <img src="/logo.png" alt="SmartVitae Logo" className={styles.logo} />
+          <img src="/sv.png" alt="SmartVitae Logo" className={styles.logo} />
         </Link>
           ) : (
              <Link href="/" onClick={() => setIsMobileOpen(false)}>

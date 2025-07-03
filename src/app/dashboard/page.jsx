@@ -6,6 +6,7 @@ import styles from './Dashboard.module.css'; // Import CSS Module
 import Link from 'next/link';
 import Layout from '../components/Layout/Layout';
 import LoadingSpinner from '../components/LoadingSpinner/LoadingSpinner'; // Sesuaikan path
+import AIChatbot from '../components/AIChatbot/AIChatbot'; // Import Chatbot Anda
 
 const DashboardPage = () => {
   const router = useRouter();
@@ -74,7 +75,10 @@ const DashboardPage = () => {
 
   return (
     <Layout>
+      
       <div className={styles.pageContainer}>
+                                <AIChatbot /> 
+
         <div className={styles.header}>
           <h1 className={styles.headerTitle}>Selamat Datang, {user?.user_metadata.full_name || user?.email}!</h1>
           <p className={styles.headerSubtitle}>Ini adalah pusat kendali karier Anda.</p>

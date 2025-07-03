@@ -260,3 +260,20 @@
     display: none;
   }
 }
+
+.loadingText {
+  /* Contoh styling */
+  font-size: 0.9rem; /* Ukuran font lebih kecil */
+  color: #6B7280; /* Warna teks abu-abu yang lebih gelap */
+  text-align: center; /* Teks di tengah */
+  margin-top: 0.5rem; /* Jarak dari elemen di atasnya */
+  opacity: 0; /* Mulai dengan transparan */
+  animation: fadeIn 0.5s forwards; /* Animasi fade-in saat muncul */
+}
+
+/* Optional: Animasi fade-in */
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}

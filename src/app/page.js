@@ -6,6 +6,7 @@ import ProcessSection from './home/ProcessSection';
 import TestimonialSection  from './home/TestimonialSection';
 import CTASection from './home/CTASection';
 import Footer from './components/Footer/Footer';
+import AIChatbot from './components/AIChatbot/AIChatbot'; // Import Chatbot Anda
 
 function HomePage() {
 
@@ -13,6 +14,8 @@ function HomePage() {
     <div>
       <Navbar />
           <main>
+                  <AIChatbot /> {/* Tambahkan komponen chatbot di sini */}
+
       <HeroSection />
       <FeatureSection />
       <ProcessSection />

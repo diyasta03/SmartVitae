@@ -5,6 +5,7 @@ import styles from './ATSChecker.module.css'; // Pastikan path ini benar
 import Link from 'next/link';
 import { FiArrowLeft, FiUpload, FiClipboard, FiSearch, FiFileText, FiAward, FiTool, FiKey, FiCheckCircle, FiAlertCircle, FiChevronRight, FiDownload, FiLoader, FiX, FiFiInfo } from 'react-icons/fi';
 import { useRouter } from 'next/navigation'; // Import useRouter
+import AIChatbot from '../components/AIChatbot/AIChatbot'; // Import Chatbot Anda
 
 function ATSCheckerPage() { // Atau function HomePage() jika itu pages/index.jsx
     const [selectedFile, setSelectedFile] = useState(null);
@@ -90,7 +91,8 @@ const router = useRouter(); // Ini juga sudah ada
 
     return (
         <div className={styles.container}>
-          
+                                  <AIChatbot /> 
+
         <button onClick={() => router.back()} className={styles.backLink}>
         <FiArrowLeft className={styles.backIcon} /> Kembali
       </button>

@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { FiArrowLeft, FiSave, FiDownload, FiPlus, FiTrash2, FiLoader, FiEye, FiEyeOff } from "react-icons/fi";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import AIChatbot from '../components/AIChatbot/AIChatbot'; // Import Chatbot Anda
 
 export default function CvMaker() {
   const router = useRouter();
@@ -473,6 +474,7 @@ export default function CvMaker() {
 
   return (
     <div className={styles.cvContainer}>
+         <AIChatbot /> 
       {/* Left Panel - Form Section */}
       <div className={styles.formSection}>
         <div className={styles.formHeader}>

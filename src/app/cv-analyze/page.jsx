@@ -9,6 +9,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation'; // Import useRouter
 import { supabase } from "../../lib/supabaseClient";
 import Image from 'next/image';
+import AIChatbot from '../components/AIChatbot/AIChatbot'; // Import Chatbot Anda
+import LoadingSpinner from '../components/LoadingSpinner/LoadingSpinner'; // Sesuaikan path ini jika beda!
+
 const CVOptimizer = () => {
     const [showExample, setShowExample] = useState(false);
 
@@ -174,16 +177,14 @@ const CVOptimizer = () => {
   };
 
   // Display a loading message while checking auth status
-  if (isAuthLoading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen text-lg text-gray-700">
-        <FiLoader className="animate-spin text-4xl mr-3" /> Memuat...
-      </div>
-    );
+    if (isAuthLoading) {
+    return <LoadingSpinner />; // Panggil komponen LoadingSpinner di sini
   }
-
   return (
+    
     <div className={styles.container}>
+                        <AIChatbot /> {/* Tambahkan komponen chatbot di sini */}
+
        <button onClick={() => router.back()} className={styles.backLink}>
              <FiArrowLeft className={styles.backIcon} /> Kembali
            </button>

@@ -69,7 +69,7 @@ pauseBetweenAnimations={1}
 />
             
          <motion.h1 className={styles.heroTitle} variants={itemVariants}>
-  Smart Tools for <span>Career Growth</span>
+  Your Future <span>Start Here</span>
 </motion.h1>
 
 <motion.p className={styles.heroDescription} variants={itemVariants}>
