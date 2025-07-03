@@ -203,7 +203,7 @@ const CVOptimizer = () => {
           <div className={styles.formGroup}>
             <label className={styles.label}>
               <FiFileText className={styles.labelIcon} />
-              Nama Perusahaan (Opsional).
+              Nama Perusahaan (Opsional)
             </label>
             <input
               type="text"
