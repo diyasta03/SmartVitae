@@ -209,7 +209,7 @@ const CVOptimizer = () => {
               type="text"
               value={companyName}
               onChange={(e) => setCompanyName(e.target.value)}
-              placeholder="Contoh: Google Indonesia"
+              placeholder="Contoh: Google Indonesia/Tokopedia"
               className={styles.input}
             />
           </div>
