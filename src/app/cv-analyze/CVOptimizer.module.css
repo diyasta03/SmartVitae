@@ -357,7 +357,87 @@
   gap: 0.5rem;
   overflow-x: auto;
 }
+/* Tambahkan style baru ini */
+.labelRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
 
+.exampleButton {
+  background: none;
+  border: none;
+  color: #3b82f6;
+  font-size: 0.875rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.exampleButton:hover {
+  text-decoration: underline;
+}
+
+.exampleContainer {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.exampleContent {
+  max-width: 100%;
+}
+
+.exampleSteps {
+  padding-left: 20px;
+  margin: 12px 0;
+}
+
+.exampleSteps li {
+  margin-bottom: 8px;
+}
+
+.smallGif {
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  margin: 0 auto;
+  display: block;
+}
+
+.exampleGifContainer {
+  padding: 8px;
+  background: #f8fafc;
+  border-radius: 8px;
+  margin: 12px 0;
+}
+.exampleGif {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.exampleCaption {
+  text-align: center;
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-top: 8px;
+}
+
+.textareaHint {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
 .tab {
   padding: 0.75rem 1rem;
   background: none;

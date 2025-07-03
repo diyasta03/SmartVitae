@@ -8,8 +8,10 @@ import 'react-toastify/dist/ReactToastify.css';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation'; // Import useRouter
 import { supabase } from "../../lib/supabaseClient";
-
+import Image from 'next/image';
 const CVOptimizer = () => {
+    const [showExample, setShowExample] = useState(false);
+
   const router = useRouter(); // Initialize useRouter
   const [cvFile, setCvFile] = useState(null);
   const [jobDescription, setJobDescription] = useState('');
@@ -270,11 +272,48 @@ const CVOptimizer = () => {
           </div>
         </div>
 
-        <div className={styles.formGroup}>
-          <label className={styles.label}>
-            <FiClipboard className={styles.labelIcon} />
-            Deskripsi Pekerjaan*
-          </label>
+       <div className={styles.formGroup}>
+          <div className={styles.labelRow}>
+            <label className={styles.label}>
+              <FiClipboard className={styles.labelIcon} />
+              Deskripsi Pekerjaan*
+            </label>
+            <button 
+              type="button" 
+              onClick={() => setShowExample(!showExample)}
+              className={styles.exampleButton}
+              
+            >
+              {showExample ? 'Sembunyikan Contoh' : 'Lihat Contoh'}
+            </button>
+          </div>
+
+          {showExample && (
+            <div className={styles.exampleContainer}>
+              <div className={styles.exampleContent}>
+                <h4>Cara Mendapatkan Deskripsi Pekerjaan:</h4>
+                <ol className={styles.exampleSteps}>
+                  <li>Buka lowongan pekerjaan di situs seperti Google, LinkedIn, JobStreet, atau Glints</li>
+                  <li>Salin bagian "Deskripsi Pekerjaan" atau "Job Description"</li>
+                  <li>Tempelkan di kolom di bawah ini</li>
+                </ol>
+                
+                <div className={styles.exampleGifContainer}>
+                  <Image 
+                    src="/images/cari.gif" 
+                    alt="Contoh mengambil deskripsi pekerjaan"
+                    width={200}  // diperkecil dari 600
+    height={267} 
+                    className={styles.exampleGif}
+                  />
+                  <p className={styles.exampleCaption}>
+                    Contoh: Menyalin deskripsi pekerjaan dari Google
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
           <textarea
             value={jobDescription}
             onChange={(e) => setJobDescription(e.target.value)}
@@ -283,6 +322,10 @@ const CVOptimizer = () => {
             className={styles.textarea}
             required
           />
+          <p className={styles.textareaHint}>
+            <FiInfo className={styles.hintIcon} />
+            Salin seluruh teks deskripsi pekerjaan termasuk persyaratan dan tanggung jawab (Semakin Lengkap Semakin bagus Hasil Analisanya)
+          </p>
         </div>
 
         <button
