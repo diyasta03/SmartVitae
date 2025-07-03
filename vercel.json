@@ -3,10 +3,7 @@
     "api/*.js": {
       "memory": 3008,
       "maxDuration": 30,
-      "includeFiles": [
-        "src/lib/templates/**",
-        "node_modules/@sparticuz/chromium-min/**"
-      ]
+      "includeFiles": "src/lib/templates/**"
     }
   }
 }
