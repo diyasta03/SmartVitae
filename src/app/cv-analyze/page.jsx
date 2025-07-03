@@ -336,7 +336,7 @@ const CVOptimizer = () => {
           {isLoading ? (
             <>
               <FiLoader className={styles.spinner} />
-              Menganalisis...
+              Menganalisis... Mohon Untuk tidak keluar atau merefresh Halaman
             </>
           ) : (
             <>
