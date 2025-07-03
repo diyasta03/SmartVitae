@@ -112,7 +112,7 @@ const CTASection = () => {
         >
           {/* Tombol Utama: Mulai Analisis CV */}
           <motion.a
-            href="/cv-analyze" // Mengarahkan ke halaman analisis CV Anda
+            href="/dashboard" // Mengarahkan ke halaman analisis CV Anda
             className={styles.primaryButton}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -128,7 +128,7 @@ const CTASection = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            Pelajari Lebih Lanjut
+            Tentang Kami
           </motion.a>
         </motion.div>
       </motion.div>

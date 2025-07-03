@@ -184,20 +184,35 @@ const CVOptimizer = () => {
 
   return (
     <div className={styles.container}>
-      <Link href="/" className={styles.backLink}>
-        <FiArrowLeft className={styles.backIcon} /> Kembali ke Home
-      </Link>
+       <button onClick={() => router.back()} className={styles.backLink}>
+             <FiArrowLeft className={styles.backIcon} /> Kembali
+           </button>
 
       <header className={styles.header}>
         <h1 className={styles.title}>
           <FiSearch className={styles.titleIcon} />
-          Penganalisis CV
+"Penganalisis CV Berdasarkan Deskripsi Pekerjaan"
+
         </h1>
         <p className={styles.subtitle}>
-"Tingkatkan peluang diterima dengan analisis CV cerdas yang mengidentifikasi kecocokan deskprisi Pekerajaan dan mengoptimalkan kata kunci untuk ATS."
-        </p>
+"Cocokkan CV Anda dengan pekerjaan impian. Dapatkan analisis cerdas untuk melihat seberapa relevan isi CV Anda dengan posisi yang dilamar, serta rekomendasi kata kunci spesifik untuk meningkatkan peluang Anda."    </p>
       </header>
-
+  <div className={styles.featurePromo}>
+      <div className={styles.featurePromoContent}>
+        <div className={styles.featurePromoText}>
+          <h3>
+    
+            Fitur Lain: ATS Checker
+          </h3>
+          <p>
+        Pastikan CV Anda mudah dibaca oleh sistem pelacakan pelamar (ATS) yang digunakan oleh banyak perusahaan. Dengan fitur ini, Anda bisa mengetahui apakah CV Anda sudah sesuai standar ATS — dari struktur, format, hingga penggunaan kata kunci!
+          </p>
+        </div>
+        <Link href="/ats-checker" className={styles.featurePromoButton}>
+          Coba Sekarang <FiChevronRight />
+        </Link>
+      </div>
+    </div>
       <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles.formGrid}>
           <div className={styles.formGroup}>

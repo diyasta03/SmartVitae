@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import styles from './Navbar.module.css';
-import { FiMenu, FiX, FiChevronDown, FiChevronUp, FiUser } from 'react-icons/fi';
+import { FiMenu, FiX, FiChevronDown, FiChevronUp, FiUser, FiStar } from 'react-icons/fi';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
@@ -93,14 +93,21 @@ export default function Navbar() {
   ];
 
   const featuresDropdownItems = [
-    { path: '/cv-analyze', label: 'Analisis CV' },
+    { 
+      path: '/ats-checker', 
+      label: 'ATS Checker', 
+      isNew: true,
+    },
+                { path: '/cv-analyze', label: 'Analisa CV' },
+
     { path: '/cv-maker', label: 'Buat CV' },
+
+
     { path: '/job-tracker', label: 'Job Tracker' },
   ];
 
   const userDropdownItems = [
     { path: '/profile', label: 'Profile' },
-    { path: '/settings', label: 'Settings' },
   ];
 
   const getUserName = () => {
@@ -146,8 +153,17 @@ export default function Navbar() {
                   {isFeaturesDropdownOpen && (
                     <div className={styles.dropdownMenu}>
                       {featuresDropdownItems.map(item => (
-                        <Link href={item.path} key={item.path} className={styles.dropdownItem} onClick={closeAllMenus}>
-                          {item.label}
+                        <Link 
+                          href={item.path} 
+                          key={item.path} 
+                          className={styles.dropdownItem} 
+                          onClick={closeAllMenus}
+                        >
+                          <div className={styles.featureItem}>
+                            {item.icon && item.icon}
+                            <span>{item.label}</span>
+                            {item.isNew && <span className={styles.newBadge}>New!</span>}
+                          </div>
                         </Link>
                       ))}
                     </div>

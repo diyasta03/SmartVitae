@@ -23,6 +23,8 @@ const Footer = () => {
             <h4 className={styles.linksHeading}>Produk</h4>
             <ul className={styles.linksList}>
               <li><Link href="/cv-analyze" className={styles.linkItem}>CV Optimizer</Link></li>
+              <li><Link href="/ats-checker" className={styles.linkItem}>ATS Checker</Link></li>
+
               <li><Link href="/create-cv" className={styles.linkItem}>Buat CV</Link></li>
               <li><Link href="/history" className={styles.linkItem}>Riwayat Analisis</Link></li>
             </ul>

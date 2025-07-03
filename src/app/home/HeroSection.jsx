@@ -96,7 +96,7 @@ const HeroSection = () => {
           transition={{ delay: 1 }}
         >
           <Link href="/cv-analyze" className={styles.primaryButton}>
-            IMPROVE MY RESUME →
+            ANALISA CV OTOMATIS →
             <motion.span
               className={styles.buttonHoverEffect}
               whileHover={{ x: 5 }}
@@ -104,7 +104,7 @@ const HeroSection = () => {
             />
           </Link>
           <Link href="/cv-maker" className={styles.secondaryButton}>
-            CREATE RESUME →
+            BUAT CV BARU →
             <motion.span
               className={styles.buttonHoverEffect}
               whileHover={{ x: 5 }}

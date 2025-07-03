@@ -313,3 +313,50 @@
     display: block;
   }
 }
+/* Add these to your existing Navbar.module.css */
+
+.featureItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.featureIcon {
+  color: #f59e0b;
+}
+
+.newBadge {
+  background-color: #4f46e5;
+  color: white;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: auto;
+  font-weight: bold;
+  text-transform: uppercase;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.dropdownItem:hover .featureIcon {
+  color: #4f46e5;
+}
+
+.dropdownItem:hover .newBadge {
+  background-color: #4f46e5;
+}
