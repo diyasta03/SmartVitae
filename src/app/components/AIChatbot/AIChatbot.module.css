@@ -426,3 +426,181 @@
     font-size: 0.85rem;
   }
 }
+
+/* Tambahkan ini ke file CSS Anda */
+.specialModesSection {
+  margin: 1rem 0;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
+
+.sectionTitle {
+  font-size: 0.8rem;
+  color: #888;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+}
+
+.specialModesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.5rem;
+}
+
+.specialModeCard {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.specialModeCard:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.specialModeCard > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.specialModeCard strong {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.specialModeCard p {
+  font-size: 0.7rem;
+  color: #aaa;
+  margin-top: 0.2rem;
+}
+
+/* Optimasi tampilan mobile */
+@media (max-width: 768px) {
+  .specialModesGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .specialModeCard {
+    padding: 0.6rem;
+  }
+}
+
+/* Anda sudah memiliki CSS yang ada di sini, tambahkan yang baru ini di bagian bawah */
+
+/* --- Form Persiapan Interview --- */
+.interviewPrepFormContainer {
+    padding: 20px;
+    background-color: #f9f9f9; /* Warna latar belakang ringan untuk form */
+    border-radius: 10px;
+    margin: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    text-align: left; /* Pastikan teks di dalam form rata kiri */
+    color: #333; /* Warna teks gelap */
+}
+
+.interviewPrepFormContainer h4 {
+    margin-top: 0;
+    color: #0056b3; /* Warna judul yang serasi dengan tema */
+    font-size: 1.2em;
+    margin-bottom: 10px;
+}
+
+.interviewPrepFormContainer p {
+    font-size: 0.9em;
+    margin-bottom: 20px;
+}
+
+.interviewForm {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Spasi antar grup form */
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+}
+
+.formGroup label {
+    margin-bottom: 5px;
+    font-size: 0.9em;
+    font-weight: 600;
+    color: #555;
+}
+
+.formGroup input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 0.9em;
+    width: 100%; /* Pastikan input mengambil lebar penuh */
+    box-sizing: border-box; /* Pastikan padding tidak menambah lebar total */
+}
+
+.formGroup input:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.submitInterviewPrepButton {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.95em;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+    margin-top: 10px; /* Spasi di atas tombol submit */
+}
+
+.submitInterviewPrepButton:hover {
+    background-color: #0056b3;
+}
+
+.cancelButton {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.95em;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+    margin-top: 10px; /* Spasi di atas tombol cancel */
+}
+
+.cancelButton:hover {
+    background-color: #5a6268;
+}
+
+/* --- Tombol Keluar Interview (di Header Chat) --- */
+.exitInterviewButton {
+    background-color: #dc3545; /* Merah untuk tombol keluar */
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.8em;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background-color 0.2s ease;
+    margin-right: 10px; /* Spasi dari tombol reset */
+}
+
+.exitInterviewButton:hover {
+    background-color: #c82333;
+}
