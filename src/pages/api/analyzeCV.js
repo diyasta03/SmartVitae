@@ -1,20 +1,25 @@
 import formidable from 'formidable';
-import { createPagesServerClient } from '@supabase/auth-helpers-nextjs'; // Atau createServerClient jika App Router
-import { extractTextFromPDF } from '@/lib/extractPdfText'; // Utility untuk ekstraksi teks PDF
+import { createPagesServerClient } from '@supabase/auth-helpers-nextjs';
+import { extractTextFromPDF } from '@/lib/extractPdfText';
+import { GoogleGenerativeAI } from '@google/generative-ai'; // Import Gemini API
+
+// Inisialisasi Gemini AI
+// Pastikan GOOGLE_API_KEY Anda tersedia di environment variables (.env.local)
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY2);
 
 // --- FUNGSI-FUNGSI HELPER UNTUK AI ---
 
-
 async function parseCVToJSON(cvText) {
-  // Pra-pemrosesan Teks: Menghapus spasi berlebih dan baris kosong yang berurutan
   const cleanedCvText = cvText
     .replace(/\s+/g, ' ')
     .replace(/\n\s*\n/g, '\n\n')
     .trim();
 
-  // Prompt dengan Contoh (Few-Shot Learning) untuk akurasi yang lebih baik
+  // Model yang lebih ringan untuk parsing
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }); // Lebih cepat dan murah dari Pro
+
   const prompt = `
-  Anda adalah asisten cerdas yang sangat ahli dalam mem-parsing teks mentah dari sebuah CV dan mengubahnya menjadi format JSON yang terstruktur dan detail. Pastikan setiap entri dalam 'experience' dan 'education' memiliki 'id' unik (misalnya, exp1, exp2, edu1, edu2) agar bisa ditargetkan untuk perubahan di kemudian hari. Jika suatu bidang tidak ditemukan atau tidak relevan, gunakan nilai null. Untuk tanggal, coba ekstrak format tahun penuh (YYYY).
+  Anda adalah asisten cerdas yang sangat ahli dalam mem-parsing teks mentah dari sebuah CV dan mengubahnya menjadi format JSON yang terstruktur dan detail. Pastikan setiap entri dalam 'experience', 'education', 'projects', dan 'certification' memiliki 'id' unik (misalnya, exp1, exp2, edu1, edu2) agar bisa ditargetkan untuk perubahan di kemudian hari. Jika suatu bidang tidak ditemukan atau tidak relevan, gunakan nilai null. Untuk tanggal, coba ekstrak format tahun penuh (YYYY) jika hanya tahun yang tersedia, atau format 'Bulan YYYY' jika bulan dan tahun tersedia.
 
   Berikut adalah beberapa contoh input dan output yang diharapkan untuk panduan:
 
@@ -161,45 +166,27 @@ async function parseCVToJSON(cvText) {
   }
   `;
 
-  // === Menggunakan OpenRouter API untuk parsing CV ===
-  const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
-  const OPENROUTER_API_TOKEN = process.env.OPENROUTER_API_KEY;
-
   try {
-    const response = await fetch(OPENROUTER_API_URL, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${OPENROUTER_API_TOKEN}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        // Menggunakan Mixtral-8x7B-Instruct melalui OpenRouter
-        model: 'mistralai/devstral-small:free',
-        // Jika ingin yang paling murah/gratis (tapi mungkin kurang akurat):
-        // model: 'mistralai/mistral-7b-instruct',
-        // model: 'deepseek/deepseek-prover-v2:free', // Model ini juga bisa untuk parsing!
-
-        messages: [{ role: 'user', content: prompt }],
-        response_format: { type: "json_object" }, // Penting agar AI mengembalikan JSON
+    const chat = model.startChat({
+      generationConfig: {
+        responseMimeType: "application/json", // Penting untuk Gemini 1.5 JSON Mode
         temperature: 0.2, // Rendah untuk output yang lebih deterministik
-        max_tokens: 2000 // Sesuaikan, OpenRouter pakai max_tokens bukan max_new_tokens
-      }),
+        maxOutputTokens: 2000,
+      },
+      history: [
+        {
+          role: "user",
+          parts: [{ text: prompt }],
+        },
+      ],
     });
 
-    const data = await response.json();
+    const result = await chat.sendMessage(prompt); // Mengirim prompt
+    const generatedText = result.response.text();
 
-    if (!response.ok || !data.choices || data.choices.length === 0) {
-      console.error("OpenRouter API (parseCVToJSON) did not return choices or response was not OK. Full response:", JSON.stringify(data, null, 2));
-      throw new Error(`Gagal mem-parsing CV: ${data.error ? data.error.message : 'Respons API tidak valid atau ada kesalahan.'}`);
-    }
-
-    const generatedText = data.choices[0].message.content;
-
-    // OpenRouter dengan response_format: { type: "json_object" } seharusnya mengembalikan JSON murni.
-    // Tidak perlu regex mencari {} lagi, langsung parse.
     const parsedJson = JSON.parse(generatedText);
 
-    // Pasca-pemrosesan & Normalisasi ID Unik
+    // Pasca-pemrosesan & Normalisasi ID Unik (tetap diperlukan karena AI bisa saja tidak selalu sempurna)
     let expCounter = 1;
     if (Array.isArray(parsedJson.experience)) {
       parsedJson.experience = parsedJson.experience.map(exp => ({
@@ -247,21 +234,23 @@ async function parseCVToJSON(cvText) {
     return parsedJson;
 
   } catch (error) {
-    console.error("Error dalam parseCVToJSON:", error);
+    console.error("Error dalam parseCVToJSON (Gemini):", error);
     if (error.name === 'SyntaxError') {
-      console.error("Kesalahan JSON Parsing: ", error.message);
-      // Untuk debugging, log respons mentah dari OpenRouter jika ada
-      if (error.rawResponse) console.error("Raw OpenRouter response:", error.rawResponse);
+      console.error("Kesalahan JSON Parsing dari Gemini: ", error.message);
+      // Untuk debugging, log respons mentah dari Gemini jika memungkinkan
+      // console.error("Raw Gemini response:", generatedText); // Hati-hati dengan ini di production
     }
     throw new Error(`Gagal mengurai respons JSON dari AI: ${error.message}.`);
   }
 }
 
-// Fungsi analyzeCVWithAI tetap menggunakan OpenRouter seperti sebelumnya
 async function analyzeCVWithAI(parsedCvData, jobDescription) {
   const cvJSONString = JSON.stringify(parsedCvData, null, 2);
+  // Model yang lebih kuat untuk analisis kompleks
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }); // Atau 'gemini-1.5-flash' jika Anda prioritaskan kecepatan/biaya
+
   const prompt = `
-  Anda adalah seorang ahli rekrutmen. Tugas Anda adalah menilai sebuah CV (format JSON) terhadap deskripsi pekerjaan yang diberikan. Berikan analisis yang komprehensif, termasuk skor keseluruhan, kekuatan utama, area perbaikan, analisis per kategori, dan kata kunci yang hilang. Untuk setiap saran di 'suggestions' dan 'actionItems', jika relevan, sertakan 'targetSection' (misalnya 'experience', 'education', 'skills') dan 'targetId' yang merujuk pada 'id' unik di JSON CV agar perubahan bisa diterapkan secara spesifik.
+  Anda adalah seorang ahli rekrutmen. Tugas Anda adalah menilai sebuah CV (format JSON) terhadap deskripsi pekerjaan yang diberikan. Berikan analisis yang komprehensif, termasuk skor keseluruhan, kekuatan utama, area perbaikan, analisis per kategori, dan kata kunci yang hilang. Untuk setiap saran di 'suggestions' dan 'actionItems', jika relevan, sertakan 'targetSection' (misalnya 'experience', 'education', 'skills') dan 'targetId' yang merujuk pada 'id' unik di JSON CV agar perubahan bisa diterapkan secara spesifik (GUNAKAN BAHASA INDONESIA).
 
   CV (JSON):
   ${cvJSONString}
@@ -307,31 +296,32 @@ async function analyzeCVWithAI(parsedCvData, jobDescription) {
   }
   `;
 
-  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: 'deepseek/deepseek-r1-0528:free', // Tetap menggunakan Deepseek Prover untuk analisis
-      messages: [{ role: 'user', content: prompt }],
-      response_format: { type: "json_object" }
-    }),
-  });
-  
-  const data = await response.json();
-
-  if (!response.ok || !data.choices || data.choices.length === 0) {
-    console.error("AI (analyzeCVWithAI) did not return choices or response was not OK. Full response:", JSON.stringify(data, null, 2));
-    throw new Error(`Gagal menganalisis CV: ${data.error ? data.error.message : 'Respons AI tidak valid atau ada kesalahan.'}`);
-  }
-
   try {
-    return JSON.parse(data.choices[0].message.content);
+    const chat = model.startChat({
+      generationConfig: {
+        responseMimeType: "application/json", // Penting untuk Gemini 1.5 JSON Mode
+        temperature: 0.2, // Rendah untuk output yang lebih deterministik
+        maxOutputTokens: 2000,
+      },
+      history: [
+        {
+          role: "user",
+          parts: [{ text: prompt }],
+        },
+      ],
+    });
+
+    const result = await chat.sendMessage(prompt);
+    const generatedText = result.response.text();
+    
+    return JSON.parse(generatedText);
+
   } catch (error) {
-    console.error("Error parsing JSON from Deepseek Prover (analysis):", error);
-    console.error("Raw content from Deepseek Prover (analysis):", data.choices[0].message.content);
+    console.error("Error dalam analyzeCVWithAI (Gemini):", error);
+    if (error.name === 'SyntaxError') {
+      console.error("Kesalahan JSON Parsing dari Gemini (analisis): ", error.message);
+      // console.error("Raw Gemini response (analysis):", generatedText); // Hati-hati dengan ini di production
+    }
     throw new Error("Gagal mengurai respons JSON dari AI untuk analisis. Silakan coba lagi atau periksa format output.");
   }
 }
@@ -389,8 +379,8 @@ export default async function handler(req, res) {
     }
 
     const text = await extractTextFromPDF(file.filepath);
-    const parsedCvData = await parseCVToJSON(text);
-    const analysisResult = await analyzeCVWithAI(parsedCvData, jobDescription);
+    const parsedCvData = await parseCVToJSON(text); // Menggunakan Gemini
+    const analysisResult = await analyzeCVWithAI(parsedCvData, jobDescription); // Menggunakan Gemini
     
     const { error: insertError } = await supabase
       .from('analysis_history')
