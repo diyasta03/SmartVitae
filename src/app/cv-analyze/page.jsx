@@ -1,75 +1,75 @@
 "use client";
-import React, { useState, useEffect } from 'react'; // Import useEffect
+import React, { useState, useEffect } from 'react';
 import styles from './CVOptimizer.module.css';
 import { FiArrowLeft, FiUpload, FiClipboard, FiSearch, FiFileText, FiAward, FiTool, FiKey, FiCheckCircle, FiAlertCircle, FiChevronRight, FiDownload, FiLoader, FiX, FiInfo } from 'react-icons/fi';
-import { FaRegLightbulb, FaRegSmile, FaRegMeh, FaRegFrown } from 'react-icons/fa';
+import { FaRegLightbulb, FaRegSmile, FaRegMeh, FaRegFrown, FaRocket } from 'react-icons/fa'; // <<< ADD FaRocket here
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation'; // Import useRouter
+import { useRouter } from 'next/navigation';
 import { supabase } from "../../lib/supabaseClient";
 import Image from 'next/image';
-import AIChatbot from '../components/AIChatbot/AIChatbot'; // Import Chatbot Anda
-import LoadingSpinner from '../components/LoadingSpinner/LoadingSpinner'; // Sesuaikan path ini jika beda!
+import AIChatbot from '../components/AIChatbot/AIChatbot';
+import LoadingSpinner from '../components/LoadingSpinner/LoadingSpinner';
 
 const CVOptimizer = () => {
-    const [showExample, setShowExample] = useState(false);
-
-  const router = useRouter(); // Initialize useRouter
+  const [showExample, setShowExample] = useState(false);
+  const router = useRouter();
   const [cvFile, setCvFile] = useState(null);
   const [jobDescription, setJobDescription] = useState('');
   const [analysisResult, setAnalysisResult] = useState(null);
-  const [isLoading, setIsLoading] = useState(false); // For form submission loading
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
   const [companyName, setCompanyName] = useState('');
   const [jobTitle, setJobTitle] = useState('');
 
-  // New state for auth loading
   const [isAuthLoading, setIsAuthLoading] = useState(true);
 
-  // Effect to check user session on component mount
+  // Effect to check user session on component mount and listen for changes
   useEffect(() => {
     const checkUserSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        // If no session, redirect to login
         router.push('/login');
       } else {
-        // If session exists, set auth loading to false
         setIsAuthLoading(false);
       }
     };
 
     checkUserSession();
 
-    // Listen for auth state changes to handle logout/login events dynamically
     const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!session) {
-        router.push('/login'); // Redirect if user logs out from another tab/window
+        router.push('/login');
       } else {
         setIsAuthLoading(false);
       }
     });
 
     return () => {
-      authListener.subscription.unsubscribe(); // Cleanup the listener
+      authListener.subscription.unsubscribe();
     };
-  }, [router]); // Dependency array includes router to avoid lint warnings
+  }, [router]);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Clear previous error messages when a new file is selected
+      setError(null);
       if (file.size > 5 * 1024 * 1024) {
         setError('Ukuran file terlalu besar (maksimal 5MB)');
+        toast.error('Ukuran file terlalu besar (maksimal 5MB)');
+        setCvFile(null); // Clear the file selection
         return;
       }
       if (file.type !== 'application/pdf') {
         setError('Hanya file PDF yang diterima');
+        toast.error('Hanya file PDF yang diterima');
+        setCvFile(null); // Clear the file selection
         return;
       }
       setCvFile(file);
-      setError(null);
     }
   };
 
@@ -78,12 +78,12 @@ const CVOptimizer = () => {
 
     if (!cvFile || !jobDescription.trim()) {
       setError('Harap unggah CV dan masukkan deskripsi pekerjaan');
-      toast.error('Harap unggah CV dan masukkan deskripsi pekerjaan'); // Add toast for this validation
+      toast.error('Harap unggah CV dan masukkan deskripsi pekerjaan');
       return;
     }
 
     setIsLoading(true);
-    setError(null);
+    setError(null); // Clear previous errors
 
     try {
       const formData = new FormData();
@@ -107,7 +107,7 @@ const CVOptimizer = () => {
       setActiveTab('overview');
       toast.success('Analisis berhasil!');
     } catch (err) {
-      console.error("Error:", err);
+      console.error("Error submitting CV analysis:", err); // More specific error logging
       setError(err.message);
       toast.error(err.message);
     } finally {
@@ -121,6 +121,8 @@ const CVOptimizer = () => {
       return;
     }
 
+    // You might want a separate loading state for download if it's long-running
+    // but for simplicity, we'll use the main isLoading for now.
     setIsLoading(true);
     try {
       const response = await fetch('/api/generateReport', {
@@ -129,18 +131,23 @@ const CVOptimizer = () => {
         body: JSON.stringify({ analysisResult, companyName, jobTitle }),
       });
 
-      if (!response.ok) throw new Error('Gagal membuat laporan PDF');
+      if (!response.ok) {
+        const errorData = await response.json(); // Try to get error details from response
+        throw new Error(errorData.error || 'Gagal membuat laporan PDF');
+      }
 
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `Laporan_CV_${companyName || 'SmartVitae'}.pdf`;
+      a.download = `Laporan_CV_${jobTitle ? jobTitle.replace(/\s/g, '_') : 'Analisis'}_${companyName ? companyName.replace(/\s/g, '_') : 'SmartVitae'}.pdf`; // More dynamic filename
       document.body.appendChild(a);
       a.click();
       a.remove();
+      window.URL.revokeObjectURL(url); // Clean up the URL object
       toast.success('Laporan berhasil diunduh!');
     } catch (err) {
+      console.error("Error downloading report:", err); // Specific error logging
       toast.error(err.message);
     } finally {
       setIsLoading(false);
@@ -150,13 +157,13 @@ const CVOptimizer = () => {
   const renderScoreCircle = (score) => {
     let color, Icon;
     if (score >= 80) {
-      color = '#10B981';
+      color = '#10B981'; // Green
       Icon = FaRegSmile;
     } else if (score >= 60) {
-      color = '#F59E0B';
+      color = '#F59E0B'; // Orange
       Icon = FaRegMeh;
     } else {
-      color = '#EF4444';
+      color = '#EF4444'; // Red
       Icon = FaRegFrown;
     }
 
@@ -177,43 +184,44 @@ const CVOptimizer = () => {
   };
 
   // Display a loading message while checking auth status
-    if (isAuthLoading) {
-    return <LoadingSpinner />; // Panggil komponen LoadingSpinner di sini
+  if (isAuthLoading) {
+    return <LoadingSpinner />;
   }
-  return (
-    
-    <div className={styles.container}>
-                        <AIChatbot /> {/* Tambahkan komponen chatbot di sini */}
 
-       <button onClick={() => router.back()} className={styles.backLink}>
-             <FiArrowLeft className={styles.backIcon} /> Kembali
-           </button>
+  return (
+    <div className={styles.container}>
+      <AIChatbot />
+
+      <button onClick={() => router.back()} className={styles.backLink}>
+        <FiArrowLeft className={styles.backIcon} /> Kembali
+      </button>
 
       <header className={styles.header}>
         <h1 className={styles.title}>
           <FiSearch className={styles.titleIcon} />
-"Penganalisis CV Berdasarkan Deskripsi Pekerjaan"
-
+          "Penganalisis CV Berdasarkan Deskripsi Pekerjaan"
         </h1>
         <p className={styles.subtitle}>
-"Cocokkan CV Anda dengan pekerjaan impian. Dapatkan analisis cerdas untuk melihat seberapa relevan isi CV Anda dengan posisi yang dilamar, serta rekomendasi kata kunci spesifik untuk meningkatkan peluang Anda."    </p>
+          "Cocokkan CV Anda dengan pekerjaan impian. Dapatkan analisis cerdas untuk melihat seberapa relevan isi CV Anda dengan posisi yang dilamar, serta rekomendasi kata kunci spesifik untuk meningkatkan peluang Anda."
+        </p>
       </header>
-  <div className={styles.featurePromo}>
-      <div className={styles.featurePromoContent}>
-        <div className={styles.featurePromoText}>
-          <h3>
-    
-            Fitur Lain: ATS Checker
-          </h3>
-          <p>
-        Pastikan CV Anda mudah dibaca oleh sistem pelacakan pelamar (ATS) yang digunakan oleh banyak perusahaan. Dengan fitur ini, Anda bisa mengetahui apakah CV Anda sudah sesuai standar ATS — dari struktur, format, hingga penggunaan kata kunci!
-          </p>
+
+      <div className={styles.featurePromo}>
+        <div className={styles.featurePromoContent}>
+          <div className={styles.featurePromoText}>
+            <h3>
+              Fitur Lain: ATS Checker
+            </h3>
+            <p>
+              Pastikan CV Anda mudah dibaca oleh sistem pelacakan pelamar (ATS) yang digunakan oleh banyak perusahaan. Dengan fitur ini, Anda bisa mengetahui apakah CV Anda sudah sesuai standar ATS — dari struktur, format, hingga penggunaan kata kunci!
+            </p>
+          </div>
+          <Link href="/ats-checker" className={styles.featurePromoButton}>
+            Coba Sekarang <FiChevronRight />
+          </Link>
         </div>
-        <Link href="/ats-checker" className={styles.featurePromoButton}>
-          Coba Sekarang <FiChevronRight />
-        </Link>
       </div>
-    </div>
+
       <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles.formGrid}>
           <div className={styles.formGroup}>
@@ -257,6 +265,7 @@ const CVOptimizer = () => {
               accept=".pdf"
               onChange={handleFileChange}
               className={styles.fileInput}
+              key={cvFile ? cvFile.name : 'no-file'} // Add key to reset input when file is cleared
             />
             <label htmlFor="cvFile" className={styles.fileLabel}>
               {cvFile ? (
@@ -265,11 +274,12 @@ const CVOptimizer = () => {
                   <button
                     type="button"
                     onClick={(e) => {
-                      e.stopPropagation();
+                      e.stopPropagation(); // Prevent triggering the label click
                       setCvFile(null);
-                      document.getElementById('cvFile').value = '';
+                      // No need to manually reset input value if using key prop
                     }}
                     className={styles.fileClear}
+                    title="Hapus file"
                   >
                     <FiX />
                   </button>
@@ -288,17 +298,16 @@ const CVOptimizer = () => {
           </div>
         </div>
 
-       <div className={styles.formGroup}>
+        <div className={styles.formGroup}>
           <div className={styles.labelRow}>
             <label className={styles.label}>
               <FiClipboard className={styles.labelIcon} />
               Deskripsi Pekerjaan*
             </label>
-            <button 
-              type="button" 
+            <button
+              type="button"
               onClick={() => setShowExample(!showExample)}
               className={styles.exampleButton}
-              
             >
               {showExample ? 'Sembunyikan Contoh' : 'Lihat Contoh'}
             </button>
@@ -313,13 +322,13 @@ const CVOptimizer = () => {
                   <li>Salin bagian "Deskripsi Pekerjaan" atau "Job Description"</li>
                   <li>Tempelkan di kolom di bawah ini</li>
                 </ol>
-                
+
                 <div className={styles.exampleGifContainer}>
-                  <Image 
-                    src="/images/cari.gif" 
+                  <Image
+                    src="/images/cari.gif"
                     alt="Contoh mengambil deskripsi pekerjaan"
-                    width={200}  // diperkecil dari 600
-    height={267} 
+                    width={200}
+                    height={267}
                     className={styles.exampleGif}
                   />
                   <p className={styles.exampleCaption}>
@@ -409,6 +418,13 @@ const CVOptimizer = () => {
             >
               <FiKey className={styles.tabIcon} />
               Kata Kunci
+            </button>
+            <button
+              className={`${styles.tab} ${activeTab === 'actions' ? styles.activeTab : ''}`}
+              onClick={() => setActiveTab('actions')}
+            >
+              <FaRocket className={styles.tabIcon} />
+              Tindakan
             </button>
           </div>
 
@@ -543,6 +559,27 @@ const CVOptimizer = () => {
                     <strong>Tip Profesional:</strong> Menambahkan kata kunci yang relevan dapat meningkatkan peluang CV Anda terdeteksi oleh sistem ATS sebesar 40-60%.
                   </div>
                 </div>
+              </div>
+            )}
+            {activeTab === 'actions' && (
+              <div className={styles.actionsContent}>
+                <section className={styles.section}>
+                  <h4 className={styles.sectionTitle}>
+                    <FaRocket className={styles.sectionIcon} />
+                    Rencana Tindakan
+                  </h4>
+                  <div className={styles.actionsList}>
+                    {(analysisResult.actionItems || []).map((action, index) => (
+                      <div key={index} className={styles.actionItem}>
+                        <div className={styles.actionNumber}>{index + 1}</div>
+                        <div className={styles.actionText}>
+                          <FiChevronRight className={styles.actionIcon} />
+                          {action.text || action}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
               </div>
             )}
           </div>
