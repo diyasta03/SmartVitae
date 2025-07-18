@@ -33,7 +33,7 @@ export async function POST(req) {
     `;
 
     const completion = await client.chat.completions.create({
-      model: "tngtech/deepseek-r1t2-chimera:free", // Change model name if needed
+      model: "meta-llama/llama-4-maverickss:free", // Change model name if needed
       messages: [
         {
           role: "user",
