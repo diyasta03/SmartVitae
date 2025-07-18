@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
-import styles from './AIChatbot.module.css'; // Pastikan path CSS ini benar
+import styles from './AIChatbot.module.css'; 
 import { FiSend, FiLoader, FiX, FiRefreshCcw } from 'react-icons/fi';
 import { FaRobot, FaRegLightbulb, FaFileAlt, FaUserTie, FaChartLine } from 'react-icons/fa';
 import { toast } from 'react-toastify';
@@ -15,10 +15,9 @@ const AIChatbot = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showCategories, setShowCategories] = useState(true);
   const [isInInterviewMode, setIsInInterviewMode] = useState(false);
-  const [showInterviewPrepForm, setShowInterviewPrepForm] = useState(false); // State baru untuk form persiapan interview
-  const [companyName, setCompanyName] = useState(''); // State untuk nama perusahaan
-  const [jobPosition, setJobPosition] = useState(''); // State untuk posisi pekerjaan
-  const messagesEndRef = useRef(null);
+  const [showInterviewPrepForm, setShowInterviewPrepForm] = useState(false);
+  const [companyName, setCompanyName] = useState(''); 
+  const [jobPosition, setJobPosition] = useState(''); 
 
   // Fitur utama website (versi compact)
   const websiteFeatures = [
@@ -56,7 +55,6 @@ const AIChatbot = () => {
     }
   ];
 
-  // Kategori bantuan umum
   const helpTopics = [
     {
       id: 'interview',
@@ -118,7 +116,7 @@ const AIChatbot = () => {
     } else {
       setIsInInterviewMode(false);
       setShowInterviewPrepForm(false);
-      setMessages([]); // Pastikan chat direset jika memilih kategori non-interview
+      setMessages([]); 
       setInputMessage(prompt);
       setShowCategories(false);
     }
@@ -136,8 +134,7 @@ const AIChatbot = () => {
 
     const userPromptText = `Saya mau latihan interview kerja untuk posisi ${jobPosition} di perusahaan ${companyName}.`;
 
-    // Langsung set messages di UI dengan pesan awal dari user
-    // Ini juga akan menjadi satu-satunya pesan dalam history yang dikirim pertama kali
+  
     setMessages([{ sender: 'user', text: userPromptText }]);
 
     setIsLoading(true);
@@ -148,8 +145,8 @@ const AIChatbot = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          message: userPromptText, // Pesan yang akan dijawab oleh AI
-          // History hanya berisi satu pesan user awal, diformat untuk Gemini
+          message: userPromptText, 
+      
           history: [{ role: 'user', parts: [{ text: userPromptText }] }],
           isInInterviewMode: true,
           companyName,
@@ -186,7 +183,7 @@ const AIChatbot = () => {
     if (!inputMessage.trim() || isLoading) return;
 
     const userMessage = { sender: 'user', text: inputMessage };
-    // Tambahkan pesan user ke daftar pesan untuk tampilan UI yang instan
+
     const newMessages = [...messages, userMessage];
     setMessages(newMessages);
     setInputMessage('');
@@ -195,21 +192,18 @@ const AIChatbot = () => {
     setShowInterviewPrepForm(false);
 
     try {
-      // Format riwayat percakapan untuk dikirim ke backend
       let formattedHistory = newMessages.map(msg => ({
         role: msg.sender === 'user' ? 'user' : 'model',
         parts: [{ text: msg.text }],
       }));
 
-      // KONSISTENSI KRUSIAL: Pastikan history selalu dimulai dengan 'user'
-      // Jika pesan pertama dari model, hapus.
-      // Ini adalah perbaikan utama untuk error "First content should be with role 'user'".
+    
       if (formattedHistory.length > 0 && formattedHistory[0].role === 'model') {
         console.warn("First history message is 'model', removing it to avoid Gemini API error.");
-        formattedHistory.shift(); // Hapus elemen pertama jika itu dari model
+        formattedHistory.shift(); 
       }
 
-      // Jika setelah pembersihan history menjadi kosong, kirim array kosong
+
       // Gemini API membutuhkan history kosong atau dimulai dengan 'user'
       const historyToSend = formattedHistory.length > 0 ? formattedHistory : [];
 
@@ -221,7 +215,7 @@ const AIChatbot = () => {
         },
         body: JSON.stringify({
           message: inputMessage,
-          history: historyToSend, // Kirim history yang sudah 'bersih'
+          history: historyToSend,
           isInInterviewMode: isInInterviewMode,
           companyName: isInInterviewMode ? companyName : undefined,
           jobPosition: isInInterviewMode ? jobPosition : undefined
