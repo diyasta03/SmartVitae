@@ -23,7 +23,7 @@ const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 // Pilih model Gemini yang akan digunakan.
 // gemini-1.5-flash seringkali lebih baik untuk kasus ini karena lebih cepat
 // dan memiliki kuota yang lebih tinggi di free tier.
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }); 
+const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" }); 
 // Jika Anda ingin mencoba model yang lebih powerful (tapi mungkin kuotanya lebih ketat):
 // const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 

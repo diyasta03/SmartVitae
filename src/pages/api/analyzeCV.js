@@ -16,7 +16,7 @@ async function parseCVToJSON(cvText) {
     .trim();
 
   // Model yang lebih ringan untuk parsing
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }); // Lebih cepat dan murah dari Pro
+  const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" }); // Lebih cepat dan murah dari Pro
 
   const prompt = `
   Anda adalah asisten cerdas yang sangat ahli dalam mem-parsing teks mentah dari sebuah CV dan mengubahnya menjadi format JSON yang terstruktur dan detail. Pastikan setiap entri dalam 'experience', 'education', 'projects', dan 'certification' memiliki 'id' unik (misalnya, exp1, exp2, edu1, edu2) agar bisa ditargetkan untuk perubahan di kemudian hari. Jika suatu bidang tidak ditemukan atau tidak relevan, gunakan nilai null. Untuk tanggal, coba ekstrak format tahun penuh (YYYY) jika hanya tahun yang tersedia, atau format 'Bulan YYYY' jika bulan dan tahun tersedia.
@@ -247,7 +247,7 @@ async function parseCVToJSON(cvText) {
 async function analyzeCVWithAI(parsedCvData, jobDescription) {
   const cvJSONString = JSON.stringify(parsedCvData, null, 2);
   // Model yang lebih kuat untuk analisis kompleks
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }); // Atau 'gemini-1.5-flash' jika Anda prioritaskan kecepatan/biaya
+  const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" }); // Atau 'gemini-1.5-flash' jika Anda prioritaskan kecepatan/biaya
 
   const prompt = `
   Anda adalah seorang ahli rekrutmen. Tugas Anda adalah menilai sebuah CV (format JSON) terhadap deskripsi pekerjaan yang diberikan. Berikan analisis yang komprehensif, termasuk skor keseluruhan, kekuatan utama, area perbaikan, analisis per kategori, dan kata kunci yang hilang. Untuk setiap saran di 'suggestions' dan 'actionItems', jika relevan, sertakan 'targetSection' (misalnya 'experience', 'education', 'skills') dan 'targetId' yang merujuk pada 'id' unik di JSON CV agar perubahan bisa diterapkan secara spesifik (GUNAKAN BAHASA INDONESIA).

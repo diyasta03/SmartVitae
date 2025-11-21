@@ -19,6 +19,9 @@ const AIChatbot = () => {
   const [companyName, setCompanyName] = useState(''); 
   const [jobPosition, setJobPosition] = useState(''); 
 
+  const messagesEndRef = useRef(null);  // ✅ Tambahkan ini
+
+
   // Fitur utama website (versi compact)
   const websiteFeatures = [
     {
